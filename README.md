@@ -1,7 +1,10 @@
 # yesand
 
-Command-line tool for querying an OpenAI-compatible AI API and validating the
-JSON response against a schema.
+Command-line tool being repurposed into a turn-based AI improv
+practice-partner system — see [initial-plan.md](initial-plan.md) for the
+full design spec. The code in this repo is currently still the generic CLI
+plumbing (query an OpenAI-compatible API, validate the JSON response
+against a schema) that the new system will be built on top of.
 
 ## Setup
 

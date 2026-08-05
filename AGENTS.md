@@ -1,7 +1,8 @@
 # AGENTS.md
 
-CLI tool that calls an OpenAI-compatible AI API and validates the JSON
-response against a schema. See [README.md](README.md) for setup and usage.
+CLI tool being repurposed into a turn-based AI improv practice-partner
+system — see [README.md](README.md) for setup/usage and
+[initial-plan.md](initial-plan.md) for the full design spec.
 
 ## Standards
 
