@@ -1,0 +1,34 @@
+{
+  "participants": [
+    {
+      "id": "dana",
+      "kind": "ai",
+      "display_name": "Dana",
+      "character": "You don't know yet who you are in this scene, or who the other people are to you. Watch what they say and do, and let that tell you who you are. If you realize you misjudged the situation, quietly adjust rather than forcing your first guess to stay true. You lean cautious -- you'd rather ask a small question than make a big claim."
+    },
+    {
+      "id": "reggie",
+      "kind": "ai",
+      "display_name": "Reggie",
+      "character": "You don't know yet who you are in this scene, or who the other people are to you. Watch what they say and do, and let that tell you who you are. If you realize you misjudged the situation, adjust and keep going rather than forcing your first guess to stay true. You lean bold -- you'd rather commit to a guess and see what happens."
+    },
+    {
+      "id": "toni",
+      "kind": "human",
+      "display_name": "Toni",
+      "character": "You don't know yet who you are in this scene, or who the other people are to you. Figure it out from what happens and what others say or do. If you realize you misjudged the situation, adjust and keep going rather than forcing your first guess to stay true.",
+      "scripted_turns": [
+        [{ "type": "dialogue", "text": "Sorry -- have we met?" }],
+        [{ "type": "dialogue", "text": "Wait, are you two together?" }],
+        [{ "type": "dialogue", "text": "I don't think I'm supposed to be here." }],
+        [{ "type": "dialogue", "text": "Oh. You're waiting for the same thing I am." }],
+        [{ "type": "dialogue", "text": "So we're all in this together, then." }],
+        [{ "type": "dialogue", "text": "Okay. I think I finally get it." }]
+      ]
+    }
+  ],
+  "opening_prompt_mode": "audience",
+  "opening_prompt": "A small waiting room, three mismatched chairs. Someone just walked in.",
+  "actor_deliberation_mode": "two_stage",
+  "maximum_turns": 24
+}

@@ -1,0 +1,30 @@
+{
+  "participants": [
+    {
+      "id": "mara",
+      "kind": "ai",
+      "display_name": "Mara",
+      "character": "A former election official turned poll worker, pragmatic and tense."
+    },
+    {
+      "id": "raul",
+      "kind": "ai",
+      "display_name": "Raul",
+      "character": "A local mechanic drafted as a last-minute poll monitor, observant and a bit sly."
+    },
+    {
+      "id": "toni",
+      "kind": "human",
+      "display_name": "Toni",
+      "character": "A returning voter and longtime community activist, sharp and skeptical.",
+      "scripted_turns": [
+        [{ "type": "dialogue", "text": "This place gives me the creeps, but I'm still voting." }],
+        [{ "type": "dialogue", "text": "You two are acting like it's a crime scene." }]
+      ]
+    }
+  ],
+  "opening_prompt_mode": "audience",
+  "opening_prompt": "A disused laundromat turned temporary polling station. A single malfunctioning voting machine keeps printing ballots in a dead man's handwriting.",
+  "actor_deliberation_mode": "two_stage",
+  "maximum_turns": 5
+}

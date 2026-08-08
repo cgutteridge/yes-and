@@ -20,13 +20,19 @@ Fill in `.env`:
 
 ## Usage
 
-    npm run dev -- "Summarize the plot of Hamlet" --schema summary
-    npm run dev -- "Is this review positive: 'best pizza I've ever had'" --schema sentiment
+Two subcommands: `query` (the original generic AI-query CLI) and `scene`
+(runs a turn-based improv scene from a scene-config file — see
+[initial-plan.md](initial-plan.md)).
+
+    npm run dev -- query "Summarize the plot of Hamlet" --schema summary
+    npm run dev -- query "Is this review positive: 'best pizza I've ever had'" --schema sentiment
+    npm run dev -- scene --config fixtures/scenes/demo-scene.json
 
 Or build and run the bundled output:
 
     npm run build
-    npm start -- "..." --schema summary
+    npm start -- query "..." --schema summary
+    npm start -- scene --config fixtures/scenes/demo-scene.json
 
 Set `DEBUG=1` to see per-attempt retry logging on stderr.
 

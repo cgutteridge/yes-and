@@ -1,7 +1,7 @@
 {
   "name": "yesand",
   "version": "1.0.0",
-  "description": "CLI tool for querying an OpenAI-compatible AI API and validating JSON responses against a schema",
+  "description": "CLI being repurposed into a turn-based AI improv practice-partner system",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
