@@ -17,6 +17,7 @@ Fill in `.env`:
 - `AI_MODEL` — required. Whatever model name your provider expects (e.g. `gpt-4o-mini` for OpenAI).
 - `AI_BASE_URL` — optional. Defaults to `https://api.openai.com/v1`. Point this at any
   OpenAI-compatible endpoint instead (Azure OpenAI, OpenRouter, a local model server, etc).
+- `AI_LOG_PATH` — optional. Defaults to `logs/ai-usage.jsonl`.
 
 ## Usage
 
@@ -35,6 +36,10 @@ Or build and run the bundled output:
     npm start -- scene --config fixtures/scenes/demo-scene.json
 
 Set `DEBUG=1` to see per-attempt retry logging on stderr.
+
+Every real AI attempt is also appended to `logs/ai-usage.jsonl` by default, including the
+operation name, model, token usage when the provider returns it, and failed schema-validation
+payloads. Override the location with `AI_LOG_PATH`.
 
 ## How it works
 

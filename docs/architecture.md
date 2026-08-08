@@ -1,13 +1,18 @@
 # Architecture
 
 - [src/config/env.ts](../src/config/env.ts) — validates `AI_API_KEY` / `AI_BASE_URL` /
-  `AI_MODEL` from the environment, fails fast with a clear message on missing/invalid values.
+  `AI_MODEL` / `AI_LOG_PATH` from the environment, fails fast with a clear message on
+  missing/invalid values.
 - [src/services/aiClient.ts](../src/services/aiClient.ts) — thin factory wrapping the `openai`
   SDK client, pointed at `AI_BASE_URL`.
 - [src/services/jsonQueryService.ts](../src/services/jsonQueryService.ts) — sends the prompt,
   asks for JSON-object output, and validates the result against a Zod schema. On a validation
   failure it feeds the error back to the model and retries (`maxAttempts`, default 2) before
   throwing `JsonQueryError`. Reused as-is by every structured call the improv system below makes.
+- [src/services/aiUsageLog.ts](../src/services/aiUsageLog.ts) — appends one JSONL entry per
+  AI attempt when configured by the command layer. The default command path writes
+  `logs/ai-usage.jsonl`, including operation labels, model, provider usage metadata, and failed
+  schema-validation payloads.
 - [src/schemas/exampleSchemas.ts](../src/schemas/exampleSchemas.ts) — the schema registry
   selectable via `--schema`. Add a new one by exporting a Zod schema and adding it to
   `exampleSchemas`.

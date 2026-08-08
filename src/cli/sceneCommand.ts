@@ -21,6 +21,8 @@ export async function runSceneCommand(options: SceneCommandOptions): Promise<voi
   const sceneConfig = loadSceneConfigFromFile(options.config);
   const appConfig = loadConfig();
   const client = createAiClient(appConfig);
-  const result = await runScene(client, appConfig.model, sceneConfig);
+  const result = await runScene(client, appConfig.model, sceneConfig, {
+    aiLogPath: appConfig.aiLogPath,
+  });
   console.log(JSON.stringify(result, null, 2));
 }

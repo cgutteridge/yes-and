@@ -1,3 +1,6 @@
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { describe, expect, it, vi } from "vitest";
 import type OpenAI from "openai";
 import { z } from "zod";
@@ -90,5 +93,45 @@ describe("runJsonQuery", () => {
 
     // assert
     await expect(act).rejects.toThrow(JsonQueryError);
+  });
+
+  it("writes AI usage and schema error attempts to the configured JSONL log", async () => {
+    // arrange
+    const tempDir = await mkdtemp(join(tmpdir(), "yesand-ai-log-"));
+    const logPath = join(tempDir, "ai-usage.jsonl");
+    const { client } = fakeClient("not json", JSON.stringify({ answer: "42" }));
+
+    try {
+      // act
+      await runJsonQuery(client, testSchema, "what is the answer?", {
+        model: "test-model",
+        maxAttempts: 2,
+        operation: "test-operation",
+        aiLogPath: logPath,
+      });
+
+      // assert
+      const lines = (await readFile(logPath, "utf8")).trim().split("\n");
+      const entries = lines.map((line) => JSON.parse(line) as Record<string, unknown>);
+      expect(entries).toHaveLength(2);
+      expect(entries[0]).toMatchObject({
+        operation: "test-operation",
+        model: "test-model",
+        attempt: 1,
+        max_attempts: 2,
+        status: "schema_error",
+        response: "not json",
+      });
+      expect(entries[1]).toMatchObject({
+        operation: "test-operation",
+        model: "test-model",
+        attempt: 2,
+        max_attempts: 2,
+        status: "validated",
+      });
+      expect(entries[1]).not.toHaveProperty("response");
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
   });
 });

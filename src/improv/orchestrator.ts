@@ -25,6 +25,7 @@ export async function runScene(
   client: OpenAI,
   model: string,
   config: SceneConfig,
+  options: { aiLogPath?: string } = {},
 ): Promise<RunSceneResult> {
   const participantById = new Map(
     config.participants.map((participant) => [participant.id, participant]),
@@ -73,6 +74,7 @@ export async function runScene(
       transcript: renderedTranscript,
       participants: directorParticipants,
       maximumTurns: config.maximumTurns,
+      aiLogPath: options.aiLogPath,
     });
 
     const next = await selectNextParticipant(client, model, {
@@ -81,6 +83,7 @@ export async function runScene(
       participants: directorParticipants,
       maximumTurns: config.maximumTurns,
       turnsSoFar: transcript.turns.length,
+      aiLogPath: options.aiLogPath,
     });
 
     if (next === "END") {
@@ -118,9 +121,11 @@ export async function runScene(
     }
     const notes = performerNotesById.get(participant.id) ?? initialPerformerNotes();
     const result = await takePerformerTurn(client, model, {
+      participantId: participant.id,
       character: participant.character,
       notes,
       transcript: renderedTranscript,
+      aiLogPath: options.aiLogPath,
     });
     performerNotesById.set(participant.id, result.notes);
     transcript = appendTurn(transcript, participant.id, result.performance.entries);

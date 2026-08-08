@@ -34,25 +34,39 @@ export async function takePerformerTurn(
   client: OpenAI,
   model: string,
   params: {
+    participantId?: string;
     character: string;
     notes: PerformerNotes;
     transcript: string;
+    aiLogPath?: string;
   },
 ): Promise<PerformerTurnResult> {
   // maxAttempts: 3, not the default 2 -- see director.ts's updateDirectorNotes for why.
+  const operationPrefix = params.participantId
+    ? `scene:performer:${params.participantId}`
+    : "scene:performer";
   const planPrompt = buildPerformerPlanPrompt(params);
-  const plan = await runJsonQuery(client, turnPlanSchema, planPrompt, { model, maxAttempts: 3 });
+  const plan = await runJsonQuery(client, turnPlanSchema, planPrompt, {
+    model,
+    maxAttempts: 3,
+    operation: `${operationPrefix}:plan`,
+    aiLogPath: params.aiLogPath,
+  });
 
   const performancePrompt = buildPerformerPerformancePrompt({ ...params, plan });
   const performance = await runJsonQuery(client, performanceSchema, performancePrompt, {
     model,
     maxAttempts: 3,
+    operation: `${operationPrefix}:performance`,
+    aiLogPath: params.aiLogPath,
   });
 
   const notesUpdatePrompt = buildPerformerNotesUpdatePrompt({ ...params, plan, performance });
   const patch = await runJsonQuery(client, performerNotesPatchSchema, notesUpdatePrompt, {
     model,
     maxAttempts: 3,
+    operation: `${operationPrefix}:notes`,
+    aiLogPath: params.aiLogPath,
   });
   const notes = applyPerformerNotesPatch(params.notes, patch);
 

@@ -53,11 +53,14 @@ a short rationale, not an essay -- identify why a contribution may be
 useful while treating future paths as optional. It is never shown to
 anyone else.
 
-When filling in the schema: use an empty string for response_to if there
-is nothing yet in the transcript to respond to (for example, the very
-first turn of a scene) -- never null. confidence must be a plain number
-between 0 and 1 inclusive (0 = no confidence at all, 1 = fully confident)
--- never negative, and never a string.
+The required top-level fields are exactly: current_read, purpose,
+response_to, possible_continuations, commitment, confidence, mode. Include
+all of them. When filling in the schema: use an empty string for response_to
+if there is nothing yet in the transcript to respond to (for
+example, the very first turn of a scene) -- never null. confidence must
+be a plain number between 0 and 1 inclusive (0 = no confidence at all,
+1 = fully confident) -- never negative, and never a string. mode must be
+one of the schema's allowed strings -- never omit it.
 
 Character definition:
 ${params.character}

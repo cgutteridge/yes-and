@@ -31,6 +31,8 @@ export async function runQueryCommand(prompt: string, options: QueryCommandOptio
   const result = await runJsonQuery(client, schema, prompt, {
     model: config.model,
     maxAttempts: options.maxAttempts,
+    operation: `query:${options.schema}`,
+    aiLogPath: config.aiLogPath,
   });
   console.log(JSON.stringify(result, null, 2));
 }

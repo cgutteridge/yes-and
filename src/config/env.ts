@@ -4,12 +4,14 @@ const envSchema = z.object({
   AI_API_KEY: z.string().min(1, "is required"),
   AI_BASE_URL: z.string().url("must be a valid URL").optional(),
   AI_MODEL: z.string().min(1, "is required"),
+  AI_LOG_PATH: z.string().min(1, "must not be empty").optional(),
 });
 
 export interface AppConfig {
   apiKey: string;
   baseUrl: string | undefined;
   model: string;
+  aiLogPath: string;
 }
 
 export class ConfigError extends Error {}
@@ -35,5 +37,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     apiKey: parsed.data.AI_API_KEY,
     baseUrl: parsed.data.AI_BASE_URL,
     model: parsed.data.AI_MODEL,
+    aiLogPath: parsed.data.AI_LOG_PATH ?? "logs/ai-usage.jsonl",
   };
 }

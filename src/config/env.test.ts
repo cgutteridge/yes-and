@@ -10,7 +10,12 @@ describe("loadConfig", () => {
     const result = loadConfig(env);
 
     // assert
-    expect(result).toEqual({ apiKey: "sk-test", baseUrl: undefined, model: "gpt-4o-mini" });
+    expect(result).toEqual({
+      apiKey: "sk-test",
+      baseUrl: undefined,
+      model: "gpt-4o-mini",
+      aiLogPath: "logs/ai-usage.jsonl",
+    });
   });
 
   it("accepts an optional AI_BASE_URL override", () => {
@@ -26,6 +31,21 @@ describe("loadConfig", () => {
 
     // assert
     expect(result.baseUrl).toBe("https://example.com/v1");
+  });
+
+  it("accepts an optional AI_LOG_PATH override", () => {
+    // arrange
+    const env = {
+      AI_API_KEY: "sk-test",
+      AI_MODEL: "gpt-4o-mini",
+      AI_LOG_PATH: "tmp/ai.jsonl",
+    };
+
+    // act
+    const result = loadConfig(env);
+
+    // assert
+    expect(result.aiLogPath).toBe("tmp/ai.jsonl");
   });
 
   it("throws a ConfigError when AI_API_KEY is missing", () => {
