@@ -183,6 +183,54 @@ describe("turnPlanSchema", () => {
     // assert
     expect(result.success).toBe(false);
   });
+
+  it("normalizes recoverable model mistakes in a private plan", () => {
+    // arrange
+    const candidate = {
+      current_read: "Raul is treating the jam as grief.",
+      purpose: "Reassert technical control.",
+      response_to: '"That is not a jam; that is grief."',
+      possible_continuations: [
+        { $ref: "#/properties/possible_continuations/items" },
+        "The machine prints another ballot.",
+      ],
+      commitment: "Keep treating the machine as equipment.",
+      "confidence ": 0.85,
+      "mode ": "react ",
+    };
+
+    // act
+    const result = turnPlanSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.possible_continuations).toEqual(["The machine prints another ballot."]);
+      expect(result.data.confidence).toBe(0.85);
+      expect(result.data.mode).toBe("react");
+    }
+  });
+
+  it("defaults missing advisory private-plan fields", () => {
+    // arrange
+    const candidate = {
+      current_read: "A readable scene state.",
+      purpose: "A playable next step.",
+    };
+
+    // act
+    const result = turnPlanSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.response_to).toBe("");
+      expect(result.data.possible_continuations).toEqual([]);
+      expect(result.data.commitment).toBe("");
+      expect(result.data.confidence).toBe(0.5);
+      expect(result.data.mode).toBe("react");
+    }
+  });
 });
 
 describe("performerNotesPatchSchema", () => {

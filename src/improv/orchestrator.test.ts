@@ -71,9 +71,12 @@ describe("runScene", () => {
       EMPTY_PATCH_JSON, // director notes (turn 3)
       selectionJson("END"),
     );
+    const progressMessages: string[] = [];
 
     // act
-    const result = await runScene(client, "test-model", config);
+    const result = await runScene(client, "test-model", config, {
+      onProgress: (message) => progressMessages.push(message),
+    });
 
     // assert
     expect(result.endedBy).toBe("director");
@@ -85,6 +88,14 @@ describe("runScene", () => {
       },
       { turn: 2, participantId: "alice", entries: [{ type: "dialogue", text: "Does it tick?" }] },
     ]);
+    expect(progressMessages).toContain("turn 1/10: updating director notes");
+    expect(progressMessages).toContain("turn 1/10: director selected Leo");
+    expect(progressMessages).toContain("turn 1/10: using scripted turn for Leo");
+    expect(progressMessages).toContain('turn result: 1. Leo: "Nothing to see here."');
+    expect(progressMessages).toContain("turn 2/10: director selected Alice");
+    expect(progressMessages).toContain("turn 2/10: asking Alice for an AI turn");
+    expect(progressMessages).toContain('turn result: 2. Alice: "Does it tick?"');
+    expect(progressMessages).toContain("director ended the scene");
   });
 
   it("stops at exactly maximumTurns with endedBy turn_limit when the director never ends", async () => {

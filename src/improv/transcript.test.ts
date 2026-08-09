@@ -58,10 +58,36 @@ describe("renderTranscript", () => {
     expect(rendered).toBe('1. Marta: "You called him Dad."');
   });
 
+  it("does not double-wrap dialogue when the model already included quotes", () => {
+    // arrange
+    const transcript = appendTurn(emptyTranscript, "marta", [
+      { type: "dialogue", text: '"You called him Dad."' },
+    ]);
+
+    // act
+    const rendered = renderTranscript(transcript, participants);
+
+    // assert
+    expect(rendered).toBe('1. Marta: "You called him Dad."');
+  });
+
   it("renders an action entry with asterisks", () => {
     // arrange
     const transcript = appendTurn(emptyTranscript, "leo", [
       { type: "action", text: "Leo locks the door." },
+    ]);
+
+    // act
+    const rendered = renderTranscript(transcript, participants);
+
+    // assert
+    expect(rendered).toBe("1. Leo: *Leo locks the door.*");
+  });
+
+  it("does not double-wrap action when the model already included asterisks", () => {
+    // arrange
+    const transcript = appendTurn(emptyTranscript, "leo", [
+      { type: "action", text: "*Leo locks the door.*" },
     ]);
 
     // act

@@ -21,8 +21,31 @@ export function appendTurn(
   };
 }
 
-function renderEntry(entry: TranscriptEntry): string {
-  return entry.type === "dialogue" ? `"${entry.text}"` : `*${entry.text}*`;
+function stripWrappingPair(text: string, opening: string, closing: string): string {
+  const trimmed = text.trim();
+  if (trimmed.startsWith(opening) && trimmed.endsWith(closing) && trimmed.length >= 2) {
+    return trimmed.slice(opening.length, -closing.length).trim();
+  }
+  return trimmed;
+}
+
+export function renderTranscriptEntry(entry: TranscriptEntry): string {
+  if (entry.type === "dialogue") {
+    const text = stripWrappingPair(stripWrappingPair(entry.text, '"', '"'), "'", "'");
+    return `"${text}"`;
+  }
+
+  const text = stripWrappingPair(entry.text, "*", "*");
+  return `*${text}*`;
+}
+
+export function renderTranscriptTurn(turn: TranscriptTurn, participants: Participant[]): string {
+  const displayNameById = new Map(
+    participants.map((participant) => [participant.id, participant.displayName]),
+  );
+  const displayName = displayNameById.get(turn.participantId) ?? turn.participantId;
+  const rendered = turn.entries.map(renderTranscriptEntry).join(" ");
+  return `${turn.turn}. ${displayName}: ${rendered}`;
 }
 
 /**
@@ -33,9 +56,6 @@ function renderEntry(entry: TranscriptEntry): string {
  * depends on it, so a change here is a change to every model's context.
  */
 export function renderTranscript(transcript: Transcript, participants: Participant[]): string {
-  const displayNameById = new Map(
-    participants.map((participant) => [participant.id, participant.displayName]),
-  );
   const lines: string[] = [];
 
   if (transcript.openingPrompt) {
@@ -43,9 +63,7 @@ export function renderTranscript(transcript: Transcript, participants: Participa
   }
 
   for (const turn of transcript.turns) {
-    const displayName = displayNameById.get(turn.participantId) ?? turn.participantId;
-    const rendered = turn.entries.map(renderEntry).join(" ");
-    lines.push(`${turn.turn}. ${displayName}: ${rendered}`);
+    lines.push(renderTranscriptTurn(turn, participants));
   }
 
   return lines.join("\n");

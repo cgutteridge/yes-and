@@ -12,6 +12,16 @@ import { z } from "zod";
  */
 
 const HARD_MAX_WORDS = 25;
+const turnPlanModeSchema = z.enum([
+  "react",
+  "offer",
+  "clarify",
+  "escalate",
+  "reincorporate",
+  "payoff",
+  "yield",
+  "panic",
+]);
 
 /** Trimmed word count; "" and whitespace-only text both count as 0. */
 export function countWords(text: string): number {
@@ -29,24 +39,40 @@ export const transcriptEntrySchema = z.object({
 export type TranscriptEntrySchemaType = z.infer<typeof transcriptEntrySchema>;
 
 // initial-plan.md §5, Stage A: the private turn plan.
-export const turnPlanSchema = z.object({
+const turnPlanShape = z.object({
   current_read: z.string().min(1),
   purpose: z.string().min(1),
-  response_to: z.string(),
-  possible_continuations: z.array(z.string()).max(5),
-  commitment: z.string(),
-  confidence: z.number().min(0).max(1),
-  mode: z.enum([
-    "react",
-    "offer",
-    "clarify",
-    "escalate",
-    "reincorporate",
-    "payoff",
-    "yield",
-    "panic",
-  ]),
+  response_to: z.string().default(""),
+  possible_continuations: z.array(z.string()).max(5).default([]),
+  commitment: z.string().default(""),
+  confidence: z.number().min(0).max(1).default(0.5),
+  mode: turnPlanModeSchema.default("react"),
 });
+
+function normalizeTurnPlanCandidate(value: unknown): unknown {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return value;
+  }
+
+  const normalized: Record<string, unknown> = {};
+  for (const [key, entryValue] of Object.entries(value)) {
+    normalized[key.trim()] = entryValue;
+  }
+
+  if (Array.isArray(normalized.possible_continuations)) {
+    normalized.possible_continuations = normalized.possible_continuations.filter(
+      (entry): entry is string => typeof entry === "string",
+    );
+  }
+
+  if (typeof normalized.mode === "string") {
+    normalized.mode = normalized.mode.trim();
+  }
+
+  return normalized;
+}
+
+export const turnPlanSchema = z.preprocess(normalizeTurnPlanCandidate, turnPlanShape);
 export type TurnPlan = z.infer<typeof turnPlanSchema>;
 
 // initial-plan.md §5, Stage B: the public performance.

@@ -5,7 +5,7 @@ import { takePerformerTurn } from "./performer.js";
 import type { DirectorParticipant } from "./prompts.js";
 import type { PerformerNotes } from "./schemas.js";
 import type { SceneConfig } from "./sceneConfig.js";
-import { appendTurn, renderTranscript } from "./transcript.js";
+import { appendTurn, renderTranscript, renderTranscriptTurn } from "./transcript.js";
 import type { Transcript, TranscriptEntry } from "./types.js";
 
 export class ScriptedEntriesExhaustedError extends Error {}
@@ -14,6 +14,8 @@ export interface RunSceneResult {
   transcript: Transcript;
   endedBy: "director" | "turn_limit";
 }
+
+export type SceneProgressReporter = (message: string) => void;
 
 /**
  * The main loop (initial-plan.md §14). This is the one place allowed to
@@ -25,8 +27,9 @@ export async function runScene(
   client: OpenAI,
   model: string,
   config: SceneConfig,
-  options: { aiLogPath?: string } = {},
+  options: { aiLogPath?: string; onProgress?: SceneProgressReporter } = {},
 ): Promise<RunSceneResult> {
+  const report = options.onProgress ?? (() => {});
   const participantById = new Map(
     config.participants.map((participant) => [participant.id, participant]),
   );
@@ -64,10 +67,12 @@ export async function runScene(
     // in §14's own pseudocode. Relying solely on the model to self-limit
     // is a real risk against a real paid API.
     if (transcript.turns.length >= config.maximumTurns) {
+      report(`scene reached turn limit (${config.maximumTurns})`);
       return { transcript, endedBy: "turn_limit" };
     }
 
     const renderedTranscript = renderTranscript(transcript, config.participants);
+    report(`turn ${transcript.turns.length + 1}/${config.maximumTurns}: updating director notes`);
 
     directorNotes = await updateDirectorNotes(client, model, {
       notes: directorNotes,
@@ -77,6 +82,7 @@ export async function runScene(
       aiLogPath: options.aiLogPath,
     });
 
+    report(`turn ${transcript.turns.length + 1}/${config.maximumTurns}: selecting next performer`);
     const next = await selectNextParticipant(client, model, {
       notes: directorNotes,
       transcript: renderedTranscript,
@@ -87,6 +93,7 @@ export async function runScene(
     });
 
     if (next === "END") {
+      report("director ended the scene");
       return { transcript, endedBy: "director" };
     }
 
@@ -97,6 +104,9 @@ export async function runScene(
       // than silently proceeding with undefined.
       throw new Error(`director selected unknown participant id "${next}"`);
     }
+    report(
+      `turn ${transcript.turns.length + 1}/${config.maximumTurns}: director selected ${participant.displayName}`,
+    );
 
     if (participant.kind === "human") {
       const remaining = remainingScriptedTurnsById.get(participant.id) ?? [];
@@ -106,7 +116,11 @@ export async function runScene(
           `participant "${participant.id}" was selected but has no scripted turns left`,
         );
       }
+      report(
+        `turn ${transcript.turns.length + 1}/${config.maximumTurns}: using scripted turn for ${participant.displayName}`,
+      );
       transcript = appendTurn(transcript, participant.id, nextEntries);
+      report(`turn result: ${renderTranscriptTurn(transcript.turns.at(-1)!, config.participants)}`);
       continue;
     }
 
@@ -120,6 +134,9 @@ export async function runScene(
       );
     }
     const notes = performerNotesById.get(participant.id) ?? initialPerformerNotes();
+    report(
+      `turn ${transcript.turns.length + 1}/${config.maximumTurns}: asking ${participant.displayName} for an AI turn`,
+    );
     const result = await takePerformerTurn(client, model, {
       participantId: participant.id,
       character: participant.character,
@@ -129,5 +146,9 @@ export async function runScene(
     });
     performerNotesById.set(participant.id, result.notes);
     transcript = appendTurn(transcript, participant.id, result.performance.entries);
+    report(
+      `turn ${transcript.turns.length}/${config.maximumTurns}: recorded ${participant.displayName}'s turn`,
+    );
+    report(`turn result: ${renderTranscriptTurn(transcript.turns.at(-1)!, config.participants)}`);
   }
 }
