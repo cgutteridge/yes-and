@@ -212,3 +212,33 @@ ${JSON.stringify(params.notes)}
 Public transcript:
 ${params.transcript}`;
 }
+
+export function buildAudienceThoughtPrompt(params: { seedWords: string[] }): string {
+  return `You are simulating the private internal dialogue of one ordinary audience member at a live improv or standup show.
+
+The audience member has three unrelated words drifting through their mind.
+Connect the words into one specific, natural-sounding thought they might be having right now.
+The thought can be odd, distracted, personal or mundane, but it should not already be an improv prompt.
+
+Return a concise thought matching the required schema.
+
+Random words:
+${JSON.stringify(params.seedWords)}`;
+}
+
+export function buildAudienceSuggestionPrompt(params: {
+  thought: string;
+  promptType: string;
+}): string {
+  return `You are attending a live improv show.
+
+You are currently thinking about this private internal dialogue:
+${params.thought}
+
+The performers ask the audience for a ${params.promptType}.
+What do you shout out off the top of your head?
+
+Respond with a very short audience suggestion matching the required schema.
+It should be brief enough to be heard clearly by actors on stage.
+Do not explain it, justify it or turn it into a full premise.`;
+}

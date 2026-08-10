@@ -128,8 +128,8 @@ describe("runJsonQuery", () => {
         attempt: 2,
         max_attempts: 2,
         status: "validated",
+        response: JSON.stringify({ answer: "42" }),
       });
-      expect(entries[1]).not.toHaveProperty("response");
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

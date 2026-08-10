@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildAudienceSuggestionPrompt,
+  buildAudienceThoughtPrompt,
   buildDirectorNotesUpdatePrompt,
   buildDirectorSelectionPrompt,
   buildPerformerNotesUpdatePrompt,
@@ -19,6 +21,65 @@ const fullParticipants: Participant[] = [
   { id: "marta", kind: "ai", displayName: "Marta", character: "SECRET_CHARACTER_DEFINITION_MARTA" },
   { id: "leo", kind: "human", displayName: "Leo", character: undefined },
 ];
+
+describe("buildAudienceThoughtPrompt", () => {
+  it("includes all three seed words", () => {
+    // arrange
+    const seedWords = ["orchard", "tribunal", "velvet"];
+
+    // act
+    const prompt = buildAudienceThoughtPrompt({ seedWords });
+
+    // assert
+    expect(prompt).toContain('"orchard"');
+    expect(prompt).toContain('"tribunal"');
+    expect(prompt).toContain('"velvet"');
+  });
+
+  it("asks for an internal thought rather than an improv prompt", () => {
+    // arrange
+    const seedWords = ["kettle", "passport", "choir"];
+
+    // act
+    const prompt = buildAudienceThoughtPrompt({ seedWords });
+
+    // assert
+    expect(prompt).toContain("private internal dialogue");
+    expect(prompt).toContain("should not already be an improv prompt");
+  });
+});
+
+describe("buildAudienceSuggestionPrompt", () => {
+  it("includes the internal thought and requested prompt type", () => {
+    // arrange
+    const params = {
+      thought: "I still have that borrowed trumpet in the boot.",
+      promptType: "location",
+    };
+
+    // act
+    const prompt = buildAudienceSuggestionPrompt(params);
+
+    // assert
+    expect(prompt).toContain(params.thought);
+    expect(prompt).toContain("for a location");
+  });
+
+  it("requires a very short shouted suggestion", () => {
+    // arrange
+    const params = {
+      thought: "The sink at work sounded like a fax machine.",
+      promptType: "object",
+    };
+
+    // act
+    const prompt = buildAudienceSuggestionPrompt(params);
+
+    // assert
+    expect(prompt).toContain("very short audience suggestion");
+    expect(prompt).toContain("brief enough to be heard clearly");
+  });
+});
 
 describe("buildDirectorNotesUpdatePrompt", () => {
   it("never includes a participant's character definition, even when passed full Participant objects", () => {

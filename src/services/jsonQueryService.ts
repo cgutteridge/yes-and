@@ -104,6 +104,7 @@ export async function runJsonQuery<T>(
           finish_reason: choice?.finish_reason,
           usage: completion.usage,
           prompt,
+          response: content,
         });
       }
       return outcome.data;

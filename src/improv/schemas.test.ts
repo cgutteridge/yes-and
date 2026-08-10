@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  audienceSuggestionSchema,
+  audienceThoughtSchema,
   buildDirectorSelectionSchema,
   countWords,
   performanceSchema,
@@ -120,6 +122,56 @@ describe("performanceSchema", () => {
 
     // act
     const result = performanceSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("audienceThoughtSchema", () => {
+  it("accepts a concise internal thought", () => {
+    // arrange
+    const candidate = { thought: "I left my passport in the choir loft." };
+
+    // act
+    const result = audienceThoughtSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an empty thought", () => {
+    // arrange
+    const candidate = { thought: "   " };
+
+    // act
+    const result = audienceThoughtSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("audienceSuggestionSchema", () => {
+  it("accepts a short shouted prompt", () => {
+    // arrange
+    const candidate = { prompt: "a haunted passport office" };
+
+    // act
+    const result = audienceSuggestionSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a shouted prompt longer than eight words", () => {
+    // arrange
+    const candidate = {
+      prompt: "a very confusing passport office behind the old choir",
+    };
+
+    // act
+    const result = audienceSuggestionSchema.safeParse(candidate);
 
     // assert
     expect(result.success).toBe(false);

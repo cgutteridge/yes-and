@@ -21,13 +21,15 @@ Fill in `.env`:
 
 ## Usage
 
-Two subcommands: `query` (the original generic AI-query CLI) and `scene`
+Three subcommands: `query` (the original generic AI-query CLI), `scene`
 (runs a turn-based improv scene from a scene-config file — see
-[initial-plan.md](initial-plan.md)).
+[initial-plan.md](initial-plan.md)), and `audience-prompt` (demos the
+simulated-audience prompt generator).
 
     npm run dev -- query "Summarize the plot of Hamlet" --schema summary
     npm run dev -- query "Is this review positive: 'best pizza I've ever had'" --schema sentiment
     npm run dev -- scene --config fixtures/scenes/demo-scene.json
+    npm run audience-prompt -- "location"
 
 Or build and run the bundled output:
 
@@ -38,8 +40,8 @@ Or build and run the bundled output:
 Set `DEBUG=1` to see per-attempt retry logging on stderr.
 
 Every real AI attempt is also appended to `logs/ai-usage.jsonl` by default, including the
-operation name, model, token usage when the provider returns it, and failed schema-validation
-payloads. Override the location with `AI_LOG_PATH`.
+operation name, model, token usage when the provider returns it, and the raw AI response when
+one exists. Override the location with `AI_LOG_PATH`.
 
 ## How it works
 
@@ -47,17 +49,18 @@ See [docs/architecture.md](docs/architecture.md).
 
 ## Scripts
 
-| Command                           | Purpose                                                                                |
-| --------------------------------- | -------------------------------------------------------------------------------------- |
-| `npm run dev -- <args>`           | Run the CLI from source (tsx)                                                          |
-| `npm run build`                   | Bundle to `dist/index.js` (esbuild)                                                    |
-| `npm start -- <args>`             | Run the built bundle                                                                   |
-| `npm run lint` / `lint:fix`       | ESLint                                                                                 |
-| `npm run format` / `format:check` | Prettier                                                                               |
-| `npm run typecheck`               | `tsc --noEmit`                                                                         |
-| `npm test`                        | Unit tests (fast, no network)                                                          |
-| `npm run test:integration`        | Integration test that calls the real API — needs a real `.env`, skips itself otherwise |
-| `npm run prchecks`                | lint + format:check + typecheck + test, all together                                   |
+| Command                             | Purpose                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `npm run dev -- <args>`             | Run the CLI from source (tsx)                                                          |
+| `npm run audience-prompt -- <type>` | Demo the simulated-audience prompt generator for a prompt type such as `location`      |
+| `npm run build`                     | Bundle to `dist/index.js` (esbuild)                                                    |
+| `npm start -- <args>`               | Run the built bundle                                                                   |
+| `npm run lint` / `lint:fix`         | ESLint                                                                                 |
+| `npm run format` / `format:check`   | Prettier                                                                               |
+| `npm run typecheck`                 | `tsc --noEmit`                                                                         |
+| `npm test`                          | Unit tests (fast, no network)                                                          |
+| `npm run test:integration`          | Integration test that calls the real API — needs a real `.env`, skips itself otherwise |
+| `npm run prchecks`                  | lint + format:check + typecheck + test, all together                                   |
 
 ## Scope notes
 

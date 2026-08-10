@@ -13,6 +13,7 @@
   },
   "scripts": {
     "dev": "tsx src/index.ts",
+    "audience-prompt": "tsx src/index.ts audience-prompt",
     "build": "node scripts/build.mjs",
     "start": "node dist/index.js",
     "lint": "eslint .",

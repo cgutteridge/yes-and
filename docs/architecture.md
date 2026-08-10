@@ -11,8 +11,8 @@
   throwing `JsonQueryError`. Reused as-is by every structured call the improv system below makes.
 - [src/services/aiUsageLog.ts](../src/services/aiUsageLog.ts) — appends one JSONL entry per
   AI attempt when configured by the command layer. The default command path writes
-  `logs/ai-usage.jsonl`, including operation labels, model, provider usage metadata, and failed
-  schema-validation payloads.
+  `logs/ai-usage.jsonl`, including operation labels, model, provider usage metadata, and the raw
+  AI response when one exists.
 - [src/schemas/exampleSchemas.ts](../src/schemas/exampleSchemas.ts) — the schema registry
   selectable via `--schema`. Add a new one by exporting a Zod schema and adding it to
   `exampleSchemas`.
@@ -24,6 +24,9 @@
   (query an API, validate against an example schema), extracted out of `index.ts` unchanged.
 - [src/cli/sceneCommand.ts](../src/cli/sceneCommand.ts) — loads a scene-config file, runs a
   scene end-to-end, prints the resulting transcript as JSON.
+- [src/cli/audiencePromptCommand.ts](../src/cli/audiencePromptCommand.ts) — demo wrapper for the
+  simulated audience generator. It prints the generator walkthrough to stderr via `logger` and
+  reserves stdout for the final JSON result.
 
 Validation is always done locally against the Zod schema — the API's own `json_object` mode
 only guarantees syntactically valid JSON, not that it matches your shape.
@@ -45,6 +48,10 @@ for it.
   assignment) and renders a transcript to the plain text every prompt is built from.
 - [src/improv/prompts.ts](../src/improv/prompts.ts) — pure prompt-string builders, one per
   role/stage, each taking only the fields that role may see.
+- [src/improv/audiencePrompt.ts](../src/improv/audiencePrompt.ts) — independent audience
+  prompt generator slice: loads words through a pluggable `WordSource`, selects three with an
+  injectable RNG, asks the model to connect them into one audience member's private thought,
+  then asks for a very short shouted suggestion of the requested type.
 - [src/improv/director.ts](../src/improv/director.ts) — the director's two calls: a private
   notes update, then participant selection.
 - [src/improv/performer.ts](../src/improv/performer.ts) — an AI performer's `two_stage` turn:

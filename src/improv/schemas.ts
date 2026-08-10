@@ -12,6 +12,7 @@ import { z } from "zod";
  */
 
 const HARD_MAX_WORDS = 25;
+const AUDIENCE_PROMPT_MAX_WORDS = 8;
 const turnPlanModeSchema = z.enum([
   "react",
   "offer",
@@ -171,3 +172,26 @@ export function buildDirectorSelectionSchema(participantIds: string[]) {
   });
 }
 export type DirectorSelection = z.infer<ReturnType<typeof buildDirectorSelectionSchema>>;
+
+export const audienceThoughtSchema = z.object({
+  thought: z.string().trim().min(1),
+});
+export type AudienceThought = z.infer<typeof audienceThoughtSchema>;
+
+export const audienceSuggestionSchema = z
+  .object({
+    prompt: z.string().trim().min(1),
+  })
+  .superRefine((value, ctx) => {
+    const totalWords = countWords(value.prompt);
+    if (totalWords > AUDIENCE_PROMPT_MAX_WORDS) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          `The audience prompt contains ${totalWords} words, which exceeds the ` +
+          `${AUDIENCE_PROMPT_MAX_WORDS}-word maximum. Shorten it so actors can hear it.`,
+        path: ["prompt"],
+      });
+    }
+  });
+export type AudienceSuggestion = z.infer<typeof audienceSuggestionSchema>;
