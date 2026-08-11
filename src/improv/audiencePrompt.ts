@@ -7,10 +7,15 @@ import {
   type AudienceSuggestion,
   type AudienceThought,
 } from "./schemas.js";
-import { buildAudienceSuggestionPrompt, buildAudienceThoughtPrompt } from "./prompts.js";
+import {
+  buildAudienceSuggestionPrompt,
+  buildAudienceSystemPrompt,
+  buildAudienceThoughtPrompt,
+} from "./prompts.js";
 
 const DEFAULT_DICTIONARY_PATH = "/usr/share/dict/words";
 const SOURCE_WORD_COUNT = 3;
+const AUDIENCE_PROMPT_TEMPERATURE = 1.5;
 
 export interface WordSource {
   loadWords(): Promise<string[]>;
@@ -77,6 +82,7 @@ export async function generateAudiencePrompt(
   },
 ): Promise<AudiencePromptResult> {
   const report = params.onProgress ?? (() => {});
+  const systemInstructions = buildAudienceSystemPrompt();
   const wordSource = params.wordSource ?? new DictionaryWordSource();
   const seedWords = selectRandomWords(
     await wordSource.loadWords(),
@@ -96,6 +102,8 @@ export async function generateAudiencePrompt(
       maxAttempts: 3,
       operation: "audience-prompt:thought",
       aiLogPath: params.aiLogPath,
+      systemInstructions,
+      temperature: AUDIENCE_PROMPT_TEMPERATURE,
     },
   );
   report(`Internal dialogue: ${thought.thought}`);
@@ -114,6 +122,8 @@ export async function generateAudiencePrompt(
       maxAttempts: 3,
       operation: "audience-prompt:suggestion",
       aiLogPath: params.aiLogPath,
+      systemInstructions,
+      temperature: AUDIENCE_PROMPT_TEMPERATURE,
     },
   );
   report(`Shouted prompt: ${suggestion.prompt}`);

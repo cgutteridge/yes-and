@@ -8,6 +8,8 @@ export interface JsonQueryOptions {
   maxAttempts?: number;
   operation?: string;
   aiLogPath?: string;
+  systemInstructions?: string;
+  temperature?: number;
 }
 
 export class JsonQueryError extends Error {}
@@ -33,9 +35,11 @@ export function parseAgainstSchema<T>(content: string, schema: z.ZodType<T>): Pa
   return { success: false, error: issues.join("; ") };
 }
 
-function buildSystemPrompt(schema: z.ZodType<unknown>): string {
+function buildSystemPrompt(schema: z.ZodType<unknown>, systemInstructions?: string): string {
   const jsonSchema = z.toJSONSchema(schema);
+  const trimmedSystemInstructions = systemInstructions?.trim();
   return [
+    ...(trimmedSystemInstructions ? [trimmedSystemInstructions, ""] : []),
     "Respond with a single JSON object only.",
     "Do not include prose, explanations, or markdown code fences.",
     "The JSON must conform exactly to this JSON Schema:",
@@ -55,8 +59,9 @@ export async function runJsonQuery<T>(
 ): Promise<T> {
   const maxAttempts = options.maxAttempts ?? 2;
   const operation = options.operation ?? "json-query";
+  const systemPrompt = buildSystemPrompt(schema, options.systemInstructions);
   const messages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: buildSystemPrompt(schema) },
+    { role: "system", content: systemPrompt },
     { role: "user", content: prompt },
   ];
 
@@ -70,6 +75,7 @@ export async function runJsonQuery<T>(
       completion = await client.chat.completions.create({
         model: options.model,
         messages,
+        ...(options.temperature === undefined ? {} : { temperature: options.temperature }),
         response_format: { type: "json_object" },
       });
     } catch (error) {
@@ -78,10 +84,12 @@ export async function runJsonQuery<T>(
           timestamp: new Date().toISOString(),
           operation,
           model: options.model,
+          temperature: options.temperature,
           attempt,
           max_attempts: maxAttempts,
           status: "api_error",
           validation_error: (error as Error).message,
+          system_prompt: systemPrompt,
           prompt,
         });
       }
@@ -98,11 +106,13 @@ export async function runJsonQuery<T>(
           timestamp: new Date().toISOString(),
           operation,
           model: options.model,
+          temperature: options.temperature,
           attempt,
           max_attempts: maxAttempts,
           status: "validated",
           finish_reason: choice?.finish_reason,
           usage: completion.usage,
+          system_prompt: systemPrompt,
           prompt,
           response: content,
         });
@@ -119,12 +129,14 @@ export async function runJsonQuery<T>(
         timestamp: new Date().toISOString(),
         operation,
         model: options.model,
+        temperature: options.temperature,
         attempt,
         max_attempts: maxAttempts,
         status: "schema_error",
         validation_error: lastError,
         finish_reason: choice?.finish_reason,
         usage: completion.usage,
+        system_prompt: systemPrompt,
         prompt,
         response: content,
       });

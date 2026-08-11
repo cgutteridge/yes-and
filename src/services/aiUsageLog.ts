@@ -7,12 +7,14 @@ export interface AiUsageLogEntry {
   timestamp: string;
   operation: string;
   model: string;
+  temperature?: number;
   attempt: number;
   max_attempts: number;
   status: "validated" | "schema_error" | "api_error";
   validation_error?: string;
   finish_reason?: string | null;
   usage?: OpenAI.Chat.Completions.ChatCompletion["usage"];
+  system_prompt: string;
   prompt: string;
   response?: string;
 }

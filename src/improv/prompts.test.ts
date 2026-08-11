@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildActorSystemPrompt,
+  buildAudienceSystemPrompt,
   buildAudienceSuggestionPrompt,
   buildAudienceThoughtPrompt,
   buildDirectorNotesUpdatePrompt,
@@ -21,6 +23,30 @@ const fullParticipants: Participant[] = [
   { id: "marta", kind: "ai", displayName: "Marta", character: "SECRET_CHARACTER_DEFINITION_MARTA" },
   { id: "leo", kind: "human", displayName: "Leo", character: undefined },
 ];
+
+describe("buildActorSystemPrompt", () => {
+  it("frames the model as an actor focused on playable scene reality", () => {
+    // act
+    const prompt = buildActorSystemPrompt();
+
+    // assert
+    expect(prompt).toContain("AI actor");
+    expect(prompt).toContain("Protect the scene's reality");
+    expect(prompt).toContain("playable offers");
+  });
+});
+
+describe("buildAudienceSystemPrompt", () => {
+  it("frames the model as a quick ordinary audience member", () => {
+    // act
+    const prompt = buildAudienceSystemPrompt();
+
+    // assert
+    expect(prompt).toContain("ordinary audience member");
+    expect(prompt).toContain("shouted off the top");
+    expect(prompt).toMatch(/not\s+designed as a premise/);
+  });
+});
 
 describe("buildAudienceThoughtPrompt", () => {
   it("includes all three seed words", () => {
@@ -63,6 +89,21 @@ describe("buildAudienceSuggestionPrompt", () => {
     // assert
     expect(prompt).toContain(params.thought);
     expect(prompt).toContain("for a location");
+  });
+
+  it("places the internal thought at the end so it is the last salient context", () => {
+    // arrange
+    const params = {
+      thought: "I still have that borrowed trumpet in the boot.",
+      promptType: "location",
+    };
+
+    // act
+    const prompt = buildAudienceSuggestionPrompt(params);
+
+    // assert
+    expect(prompt).toContain("The last thing you think about before shouting your prompt idea is:");
+    expect(prompt.trim().endsWith(params.thought)).toBe(true);
   });
 
   it("requires a very short shouted suggestion", () => {

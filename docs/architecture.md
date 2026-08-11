@@ -6,13 +6,16 @@
 - [src/services/aiClient.ts](../src/services/aiClient.ts) — thin factory wrapping the `openai`
   SDK client, pointed at `AI_BASE_URL`.
 - [src/services/jsonQueryService.ts](../src/services/jsonQueryService.ts) — sends the prompt,
-  asks for JSON-object output, and validates the result against a Zod schema. On a validation
-  failure it feeds the error back to the model and retries (`maxAttempts`, default 2) before
-  throwing `JsonQueryError`. Reused as-is by every structured call the improv system below makes.
+  asks for JSON-object output, and validates the result against a Zod schema. Callers may add
+  role-specific system instructions; the service always appends the JSON-only/schema contract to
+  the system message. On a validation failure it feeds the error back to the model and retries
+  (`maxAttempts`, default 2) before throwing `JsonQueryError`. Reused as-is by every structured
+  call the improv system below makes.
 - [src/services/aiUsageLog.ts](../src/services/aiUsageLog.ts) — appends one JSONL entry per
   AI attempt when configured by the command layer. The default command path writes
-  `logs/ai-usage.jsonl`, including operation labels, model, provider usage metadata, and the raw
-  AI response when one exists.
+  `logs/ai-usage.jsonl`, including operation labels, model, the exact combined system prompt, the
+  user prompt, temperature when explicitly set, provider usage metadata, and the raw AI response
+  when one exists.
 - [src/schemas/exampleSchemas.ts](../src/schemas/exampleSchemas.ts) — the schema registry
   selectable via `--schema`. Add a new one by exporting a Zod schema and adding it to
   `exampleSchemas`.
@@ -46,16 +49,18 @@ for it.
   `discarded_ideas` appends and dedupes, every other field replaces when present in a patch.
 - [src/improv/transcript.ts](../src/improv/transcript.ts) — appends turns (owns turn-number
   assignment) and renders a transcript to the plain text every prompt is built from.
-- [src/improv/prompts.ts](../src/improv/prompts.ts) — pure prompt-string builders, one per
-  role/stage, each taking only the fields that role may see.
+- [src/improv/prompts.ts](../src/improv/prompts.ts) — pure prompt-string builders, including
+  distinct actor and audience system prompts plus one user prompt per role/stage, each taking only
+  the fields that role may see.
 - [src/improv/audiencePrompt.ts](../src/improv/audiencePrompt.ts) — independent audience
   prompt generator slice: loads words through a pluggable `WordSource`, selects three with an
   injectable RNG, asks the model to connect them into one audience member's private thought,
-  then asks for a very short shouted suggestion of the requested type.
+  then asks for a very short shouted suggestion of the requested type. Both audience-model calls
+  run at temperature `1.5`.
 - [src/improv/director.ts](../src/improv/director.ts) — the director's two calls: a private
   notes update, then participant selection.
 - [src/improv/performer.ts](../src/improv/performer.ts) — an AI performer's `two_stage` turn:
-  private plan, public performance, private notes update.
+  private plan, public performance, private notes update. Performer calls run at temperature `1.2`.
 - [src/improv/sceneConfig.ts](../src/improv/sceneConfig.ts) — the on-disk scene-config schema
   and loader; also where an unsupported (deferred) config value is rejected with a clear error.
 - [src/improv/orchestrator.ts](../src/improv/orchestrator.ts) — `runScene`, the main loop tying

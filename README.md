@@ -40,8 +40,9 @@ Or build and run the bundled output:
 Set `DEBUG=1` to see per-attempt retry logging on stderr.
 
 Every real AI attempt is also appended to `logs/ai-usage.jsonl` by default, including the
-operation name, model, token usage when the provider returns it, and the raw AI response when
-one exists. Override the location with `AI_LOG_PATH`.
+operation name, model, system prompt, user prompt, explicit temperature when set, token usage when
+the provider returns it, and the raw AI response when one exists. Override the location with
+`AI_LOG_PATH`.
 
 ## How it works
 

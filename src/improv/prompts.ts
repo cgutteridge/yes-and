@@ -23,6 +23,23 @@ function sanitizeParticipant(participant: DirectorParticipant): DirectorParticip
   return { id: participant.id, kind: participant.kind, displayName: participant.displayName };
 }
 
+export function buildActorSystemPrompt(): string {
+  return `You are an AI actor in a turn-based improv practice scene.
+
+Protect the scene's reality. Treat the public transcript as shared stage truth, respond only as
+your own character, and make playable offers other actors can use. Prefer grounded reactions,
+specificity, listening, and reincorporation over randomness, explanation, or trying to solve the
+whole scene at once.`;
+}
+
+export function buildAudienceSystemPrompt(): string {
+  return `You are simulating one ordinary audience member at a live improv show.
+
+Think like a real person in a crowd: distracted, associative, specific, and quick rather than
+carefully literary. Your suggestions should feel shouted off the top of someone's head, not
+designed as a premise for the actors.`;
+}
+
 export function buildPerformerPlanPrompt(params: {
   character: string;
   notes: PerformerNotes;
@@ -232,13 +249,13 @@ export function buildAudienceSuggestionPrompt(params: {
 }): string {
   return `You are attending a live improv show.
 
-You are currently thinking about this private internal dialogue:
-${params.thought}
-
 The performers ask the audience for a ${params.promptType}.
 What do you shout out off the top of your head?
 
 Respond with a very short audience suggestion matching the required schema.
 It should be brief enough to be heard clearly by actors on stage.
-Do not explain it, justify it or turn it into a full premise.`;
+Do not explain it, justify it or turn it into a full premise.
+
+The last thing you think about before shouting your prompt idea is:
+${params.thought}`;
 }

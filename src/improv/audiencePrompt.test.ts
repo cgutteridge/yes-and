@@ -74,8 +74,15 @@ describe("generateAudiencePrompt", () => {
       prompt: "velvet courtroom",
     });
     expect(create).toHaveBeenCalledTimes(2);
+    const firstSystemPrompt = create.mock.calls[0]?.[0].messages[0].content as string;
+    const secondSystemPrompt = create.mock.calls[1]?.[0].messages[0].content as string;
     const firstPrompt = create.mock.calls[0]?.[0].messages[1].content as string;
     const secondPrompt = create.mock.calls[1]?.[0].messages[1].content as string;
+    expect(firstSystemPrompt).toContain("simulating one ordinary audience member");
+    expect(firstSystemPrompt).toContain("Respond with a single JSON object only.");
+    expect(secondSystemPrompt).toContain("simulating one ordinary audience member");
+    expect(create.mock.calls[0]?.[0]).toMatchObject({ temperature: 1.5 });
+    expect(create.mock.calls[1]?.[0]).toMatchObject({ temperature: 1.5 });
     expect(firstPrompt).toContain('"orchard"');
     expect(secondPrompt).toContain("The velvet judge would hate my orchard pie.");
     expect(secondPrompt).toContain("for a location");

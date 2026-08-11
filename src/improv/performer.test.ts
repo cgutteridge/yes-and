@@ -32,6 +32,12 @@ describe("takePerformerTurn", () => {
 
     // assert
     expect(create).toHaveBeenCalledTimes(3);
+    for (const index of [0, 1, 2]) {
+      const systemPrompt = create.mock.calls[index]?.[0].messages[0].content as string;
+      expect(systemPrompt).toContain("AI actor in a turn-based improv practice scene");
+      expect(systemPrompt).toContain("Respond with a single JSON object only.");
+      expect(create.mock.calls[index]?.[0]).toMatchObject({ temperature: 1.2 });
+    }
     const secondCallPrompt = create.mock.calls[1]?.[0].messages[1].content as string;
     const thirdCallPrompt = create.mock.calls[2]?.[0].messages[1].content as string;
     expect(secondCallPrompt).toContain("Leo is deflecting.");

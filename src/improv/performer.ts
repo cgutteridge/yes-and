@@ -2,6 +2,7 @@ import type OpenAI from "openai";
 import { runJsonQuery } from "../services/jsonQueryService.js";
 import { applyPerformerNotesPatch } from "./notes.js";
 import {
+  buildActorSystemPrompt,
   buildPerformerNotesUpdatePrompt,
   buildPerformerPerformancePrompt,
   buildPerformerPlanPrompt,
@@ -14,6 +15,8 @@ import {
   type PerformerNotes,
   type TurnPlan,
 } from "./schemas.js";
+
+const ACTOR_TEMPERATURE = 1.2;
 
 export interface PerformerTurnResult {
   plan: TurnPlan;
@@ -45,12 +48,15 @@ export async function takePerformerTurn(
   const operationPrefix = params.participantId
     ? `scene:performer:${params.participantId}`
     : "scene:performer";
+  const systemInstructions = buildActorSystemPrompt();
   const planPrompt = buildPerformerPlanPrompt(params);
   const plan = await runJsonQuery(client, turnPlanSchema, planPrompt, {
     model,
     maxAttempts: 3,
     operation: `${operationPrefix}:plan`,
     aiLogPath: params.aiLogPath,
+    systemInstructions,
+    temperature: ACTOR_TEMPERATURE,
   });
 
   const performancePrompt = buildPerformerPerformancePrompt({ ...params, plan });
@@ -59,6 +65,8 @@ export async function takePerformerTurn(
     maxAttempts: 3,
     operation: `${operationPrefix}:performance`,
     aiLogPath: params.aiLogPath,
+    systemInstructions,
+    temperature: ACTOR_TEMPERATURE,
   });
 
   const notesUpdatePrompt = buildPerformerNotesUpdatePrompt({ ...params, plan, performance });
@@ -67,6 +75,8 @@ export async function takePerformerTurn(
     maxAttempts: 3,
     operation: `${operationPrefix}:notes`,
     aiLogPath: params.aiLogPath,
+    systemInstructions,
+    temperature: ACTOR_TEMPERATURE,
   });
   const notes = applyPerformerNotesPatch(params.notes, patch);
 

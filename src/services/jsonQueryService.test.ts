@@ -80,6 +80,37 @@ describe("runJsonQuery", () => {
     expect(create).toHaveBeenCalledTimes(2);
   });
 
+  it("combines caller system instructions with the JSON schema contract", async () => {
+    // arrange
+    const { client, create } = fakeClient(JSON.stringify({ answer: "42" }));
+
+    // act
+    await runJsonQuery(client, testSchema, "what is the answer?", {
+      model: "test-model",
+      systemInstructions: "You are a specialist test role.",
+    });
+
+    // assert
+    const systemMessage = create.mock.calls[0]?.[0].messages[0].content as string;
+    expect(systemMessage).toContain("You are a specialist test role.");
+    expect(systemMessage).toContain("Respond with a single JSON object only.");
+    expect(systemMessage).toContain('"answer"');
+  });
+
+  it("passes an explicit temperature to the provider request", async () => {
+    // arrange
+    const { client, create } = fakeClient(JSON.stringify({ answer: "42" }));
+
+    // act
+    await runJsonQuery(client, testSchema, "what is the answer?", {
+      model: "test-model",
+      temperature: 1.5,
+    });
+
+    // assert
+    expect(create.mock.calls[0]?.[0]).toMatchObject({ temperature: 1.5 });
+  });
+
   it("throws JsonQueryError after exhausting all attempts", async () => {
     // arrange
     const { client } = fakeClient("not json", "still not json");
@@ -108,6 +139,8 @@ describe("runJsonQuery", () => {
         maxAttempts: 2,
         operation: "test-operation",
         aiLogPath: logPath,
+        systemInstructions: "You are a logged test role.",
+        temperature: 1.5,
       });
 
       // assert
@@ -117,19 +150,25 @@ describe("runJsonQuery", () => {
       expect(entries[0]).toMatchObject({
         operation: "test-operation",
         model: "test-model",
+        temperature: 1.5,
         attempt: 1,
         max_attempts: 2,
         status: "schema_error",
         response: "not json",
       });
+      expect(entries[0]?.system_prompt).toContain("You are a logged test role.");
+      expect(entries[0]?.system_prompt).toContain("Respond with a single JSON object only.");
+      expect(entries[0]?.system_prompt).toContain('"answer"');
       expect(entries[1]).toMatchObject({
         operation: "test-operation",
         model: "test-model",
+        temperature: 1.5,
         attempt: 2,
         max_attempts: 2,
         status: "validated",
         response: JSON.stringify({ answer: "42" }),
       });
+      expect(entries[1]?.system_prompt).toBe(entries[0]?.system_prompt);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }
