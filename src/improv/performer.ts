@@ -42,6 +42,7 @@ export async function takePerformerTurn(
     notes: PerformerNotes;
     transcript: string;
     aiLogPath?: string;
+    aiFullLogPath?: string;
   },
 ): Promise<PerformerTurnResult> {
   // maxAttempts: 3, not the default 2 -- see director.ts's updateDirectorNotes for why.
@@ -55,6 +56,7 @@ export async function takePerformerTurn(
     maxAttempts: 3,
     operation: `${operationPrefix}:plan`,
     aiLogPath: params.aiLogPath,
+    aiFullLogPath: params.aiFullLogPath,
     systemInstructions,
     temperature: ACTOR_TEMPERATURE,
   });
@@ -65,6 +67,7 @@ export async function takePerformerTurn(
     maxAttempts: 3,
     operation: `${operationPrefix}:performance`,
     aiLogPath: params.aiLogPath,
+    aiFullLogPath: params.aiFullLogPath,
     systemInstructions,
     temperature: ACTOR_TEMPERATURE,
   });
@@ -75,6 +78,7 @@ export async function takePerformerTurn(
     maxAttempts: 3,
     operation: `${operationPrefix}:notes`,
     aiLogPath: params.aiLogPath,
+    aiFullLogPath: params.aiFullLogPath,
     systemInstructions,
     temperature: ACTOR_TEMPERATURE,
   });

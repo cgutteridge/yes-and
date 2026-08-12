@@ -33,6 +33,7 @@ export async function runQueryCommand(prompt: string, options: QueryCommandOptio
     maxAttempts: options.maxAttempts,
     operation: `query:${options.schema}`,
     aiLogPath: config.aiLogPath,
+    aiFullLogPath: config.aiFullLogPath,
   });
   console.log(JSON.stringify(result, null, 2));
 }

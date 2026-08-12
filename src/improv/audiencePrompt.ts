@@ -2,16 +2,20 @@ import { readFile } from "node:fs/promises";
 import type OpenAI from "openai";
 import { runJsonQuery } from "../services/jsonQueryService.js";
 import {
-  audienceSuggestionSchema,
+  audienceAssociationSchema,
   audienceThoughtSchema,
+  buildAudienceSuggestionSchema,
+  type AudienceAssociation,
   type AudienceSuggestion,
   type AudienceThought,
 } from "./schemas.js";
 import {
+  buildAudienceAssociationPrompt,
   buildAudienceSuggestionPrompt,
   buildAudienceSystemPrompt,
   buildAudienceThoughtPrompt,
 } from "./prompts.js";
+import { audiencePromptTypes, type AudiencePromptTypeId } from "./audiencePromptTypes.js";
 
 const DEFAULT_DICTIONARY_PATH = "/usr/share/dict/words";
 const SOURCE_WORD_COUNT = 3;
@@ -25,9 +29,13 @@ export type RandomSource = () => number;
 export type AudiencePromptProgressReporter = (message: string) => void;
 
 export interface AudiencePromptResult {
+  promptType: AudiencePromptTypeId;
   seedWords: string[];
   thought: string;
-  prompt: string;
+  association: string;
+  type: AudiencePromptTypeId;
+  suggestion: string;
+  rationale: string;
 }
 
 export class AudiencePromptError extends Error {}
@@ -74,15 +82,17 @@ export async function generateAudiencePrompt(
   client: OpenAI,
   model: string,
   params: {
-    promptType: string;
+    promptType: AudiencePromptTypeId;
     wordSource?: WordSource;
     random?: RandomSource;
     aiLogPath?: string;
+    aiFullLogPath?: string;
     onProgress?: AudiencePromptProgressReporter;
   },
 ): Promise<AudiencePromptResult> {
   const report = params.onProgress ?? (() => {});
   const systemInstructions = buildAudienceSystemPrompt();
+  const promptType = audiencePromptTypes[params.promptType];
   const wordSource = params.wordSource ?? new DictionaryWordSource();
   const seedWords = selectRandomWords(
     await wordSource.loadWords(),
@@ -102,35 +112,60 @@ export async function generateAudiencePrompt(
       maxAttempts: 3,
       operation: "audience-prompt:thought",
       aiLogPath: params.aiLogPath,
+      aiFullLogPath: params.aiFullLogPath,
       systemInstructions,
       temperature: AUDIENCE_PROMPT_TEMPERATURE,
     },
   );
   report(`Internal dialogue: ${thought.thought}`);
-  report(`Asking that simulated audience member for a ${params.promptType}...`);
+  report("Translating the internal dialogue into an everyday association...");
+
+  const associationPrompt = buildAudienceAssociationPrompt({ thought: thought.thought });
+  const association: AudienceAssociation = await runJsonQuery(
+    client,
+    audienceAssociationSchema,
+    associationPrompt,
+    {
+      model,
+      maxAttempts: 3,
+      operation: "audience-prompt:association",
+      aiLogPath: params.aiLogPath,
+      aiFullLogPath: params.aiFullLogPath,
+      systemInstructions,
+      temperature: AUDIENCE_PROMPT_TEMPERATURE,
+    },
+  );
+  report(`Everyday association: ${association.association}`);
+  report(`Asking that simulated audience member for ${promptType.requestText}...`);
 
   const suggestionPrompt = buildAudienceSuggestionPrompt({
-    thought: thought.thought,
-    promptType: params.promptType,
+    association: association.association,
+    promptType,
   });
+  const suggestionSchema = buildAudienceSuggestionSchema(promptType.id);
   const suggestion: AudienceSuggestion = await runJsonQuery(
     client,
-    audienceSuggestionSchema,
+    suggestionSchema,
     suggestionPrompt,
     {
       model,
       maxAttempts: 3,
       operation: "audience-prompt:suggestion",
       aiLogPath: params.aiLogPath,
+      aiFullLogPath: params.aiFullLogPath,
       systemInstructions,
       temperature: AUDIENCE_PROMPT_TEMPERATURE,
     },
   );
-  report(`Shouted prompt: ${suggestion.prompt}`);
+  report(`Shouted suggestion: ${suggestion.suggestion}`);
 
   return {
+    promptType: promptType.id,
     seedWords,
     thought: thought.thought,
-    prompt: suggestion.prompt,
+    association: association.association,
+    type: suggestion.type,
+    suggestion: suggestion.suggestion,
+    rationale: suggestion.rationale,
   };
 }

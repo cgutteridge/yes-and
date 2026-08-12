@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  audienceSuggestionSchema,
+  audienceAssociationSchema,
   audienceThoughtSchema,
+  buildAudienceSuggestionSchema,
   buildDirectorSelectionSchema,
   countWords,
   performanceSchema,
@@ -152,26 +153,74 @@ describe("audienceThoughtSchema", () => {
   });
 });
 
-describe("audienceSuggestionSchema", () => {
-  it("accepts a short shouted prompt", () => {
+describe("audienceAssociationSchema", () => {
+  it("accepts a concise everyday association", () => {
     // arrange
-    const candidate = { prompt: "a haunted passport office" };
+    const candidate = { association: "a fancy hotel bathroom" };
 
     // act
-    const result = audienceSuggestionSchema.safeParse(candidate);
+    const result = audienceAssociationSchema.safeParse(candidate);
 
     // assert
     expect(result.success).toBe(true);
   });
 
-  it("rejects a shouted prompt longer than eight words", () => {
+  it("rejects an empty association", () => {
     // arrange
+    const candidate = { association: "   " };
+
+    // act
+    const result = audienceAssociationSchema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("audienceSuggestionSchema", () => {
+  it("accepts a typed short shouted suggestion with a rationale", () => {
+    // arrange
+    const schema = buildAudienceSuggestionSchema("location");
     const candidate = {
-      prompt: "a very confusing passport office behind the old choir",
+      type: "location",
+      suggestion: "a haunted passport office",
+      rationale: "It connects to passports and is a location.",
     };
 
     // act
-    const result = audienceSuggestionSchema.safeParse(candidate);
+    const result = schema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a suggestion whose type does not match the requested type", () => {
+    // arrange
+    const schema = buildAudienceSuggestionSchema("character");
+    const candidate = {
+      type: "location",
+      suggestion: "a haunted passport office",
+      rationale: "It connects to passports and is a location.",
+    };
+
+    // act
+    const result = schema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a shouted suggestion longer than eight words", () => {
+    // arrange
+    const schema = buildAudienceSuggestionSchema("location");
+    const candidate = {
+      type: "location",
+      suggestion: "a very confusing passport office behind the old choir",
+      rationale: "It connects to passports and is a location.",
+    };
+
+    // act
+    const result = schema.safeParse(candidate);
 
     // assert
     expect(result.success).toBe(false);

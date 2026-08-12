@@ -19,4 +19,23 @@ describe("runAudiencePromptCommand", () => {
     process.exitCode = originalExitCode;
     errorSpy.mockRestore();
   });
+
+  it("logs an error and sets a non-zero exit code for an unknown prompt type", async () => {
+    // arrange
+    const errorSpy = vi.spyOn(logger, "error").mockImplementation(() => {});
+    const originalExitCode = process.exitCode;
+
+    // act
+    await runAudiencePromptCommand("object");
+
+    // assert
+    expect(errorSpy).toHaveBeenCalledWith(
+      'unknown audience prompt type "object". Available: location, problem, character, item, complication',
+    );
+    expect(process.exitCode).toBe(1);
+
+    // cleanup
+    process.exitCode = originalExitCode;
+    errorSpy.mockRestore();
+  });
 });

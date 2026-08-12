@@ -1,5 +1,6 @@
 import type { DirectorNotes, Performance, PerformerNotes, TurnPlan } from "./schemas.js";
 import type { Participant } from "./types.js";
+import type { AudiencePromptTypeDefinition } from "./audiencePromptTypes.js";
 
 /**
  * Only the fields the director is ever allowed to read about a
@@ -243,19 +244,44 @@ Random words:
 ${JSON.stringify(params.seedWords)}`;
 }
 
+export function buildAudienceAssociationPrompt(params: { thought: string }): string {
+  return `You are still simulating one ordinary audience member at a live improv show.
+
+Translate this private internal thought into one everyday association that could plausibly pop
+into their head next. Use plain, common language an average audience member would know.
+
+Do not repeat obscure, archaic, technical, or dictionary-looking words from the thought unless
+an average person would know them. Preserve the feeling or concrete image instead of explaining
+the thought.
+
+Return one concise association matching the required schema.
+
+Private internal thought:
+${params.thought}`;
+}
+
 export function buildAudienceSuggestionPrompt(params: {
-  thought: string;
-  promptType: string;
+  association: string;
+  promptType: AudiencePromptTypeDefinition;
 }): string {
   return `You are attending a live improv show.
 
-The performers ask the audience for a ${params.promptType}.
+The performers ask the audience for ${params.promptType.requestText}.
 What do you shout out off the top of your head?
 
-Respond with a very short audience suggestion matching the required schema.
-It should be brief enough to be heard clearly by actors on stage.
-Do not explain it, justify it or turn it into a full premise.
+Return a JSON response matching the required schema. The suggestion should be very short and
+brief enough to be heard clearly by actors on stage. Do not turn it into a full premise.
 
-The last thing you think about before shouting your prompt idea is:
-${params.thought}`;
+Use the required fields this way:
+- type: exactly "${params.promptType.id}".
+- suggestion: what the audience member shouts.
+- rationale: one concise sentence explaining how the suggestion connects to the last thought and
+  confirming it satisfies the requested type. Keep this as a brief audit note, not private
+  step-by-step reasoning.
+
+Prompt-type requirement:
+${params.promptType.instructions}
+
+The last thing you think about before shouting your suggestion is:
+${params.association}`;
 }

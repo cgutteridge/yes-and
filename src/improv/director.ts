@@ -22,6 +22,7 @@ export async function updateDirectorNotes(
     participants: DirectorParticipant[];
     maximumTurns: number;
     aiLogPath?: string;
+    aiFullLogPath?: string;
   },
 ): Promise<DirectorNotes> {
   // maxAttempts: 3, not the default 2 -- a real scene run surfaced a
@@ -34,6 +35,7 @@ export async function updateDirectorNotes(
     maxAttempts: 3,
     operation: "scene:director-notes",
     aiLogPath: params.aiLogPath,
+    aiFullLogPath: params.aiFullLogPath,
   });
   return applyDirectorNotesPatch(params.notes, patch);
 }
@@ -49,6 +51,7 @@ export async function selectNextParticipant(
     maximumTurns: number;
     turnsSoFar: number;
     aiLogPath?: string;
+    aiFullLogPath?: string;
   },
 ): Promise<string> {
   const schema = buildDirectorSelectionSchema(
@@ -60,6 +63,7 @@ export async function selectNextParticipant(
     maxAttempts: 3,
     operation: "scene:director-selection",
     aiLogPath: params.aiLogPath,
+    aiFullLogPath: params.aiFullLogPath,
   });
 
   // A private diagnostic only -- never surfaced to a performer or the transcript.

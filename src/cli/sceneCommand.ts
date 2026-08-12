@@ -31,9 +31,11 @@ export async function runSceneCommand(options: SceneCommandOptions): Promise<voi
     logger.info(`- ${participant.displayName} (${participant.kind})${detail}`);
   }
   logger.info(`AI attempt log: ${appConfig.aiLogPath}`);
+  logger.info(`Full AI API log: ${appConfig.aiFullLogPath}`);
   logger.info("Starting scene...");
   const result = await runScene(client, appConfig.model, sceneConfig, {
     aiLogPath: appConfig.aiLogPath,
+    aiFullLogPath: appConfig.aiFullLogPath,
     onProgress: (message) => logger.info(message),
   });
   logger.info(`Scene ended by: ${result.endedBy}`);

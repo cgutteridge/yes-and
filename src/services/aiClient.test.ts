@@ -9,6 +9,7 @@ describe("createAiClient", () => {
       baseUrl: "https://example.com/v1",
       model: "gpt-4o-mini",
       aiLogPath: "logs/ai-usage.jsonl",
+      aiFullLogPath: "logs/ai-full.jsonl",
     };
 
     // act

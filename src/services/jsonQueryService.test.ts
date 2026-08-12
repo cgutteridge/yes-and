@@ -17,6 +17,12 @@ function fakeClient(...responses: string[]) {
   return { client, create };
 }
 
+function fakeErrorClient(error: Error) {
+  const create = vi.fn().mockRejectedValueOnce(error);
+  const client = { chat: { completions: { create } } } as unknown as OpenAI;
+  return { client, create };
+}
+
 describe("parseAgainstSchema", () => {
   it("returns validated data when the content matches the schema", () => {
     // arrange
@@ -169,6 +175,82 @@ describe("runJsonQuery", () => {
         response: JSON.stringify({ answer: "42" }),
       });
       expect(entries[1]?.system_prompt).toBe(entries[0]?.system_prompt);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("writes full API request and response attempts to the configured JSONL log", async () => {
+    // arrange
+    const tempDir = await mkdtemp(join(tmpdir(), "yesand-ai-full-log-"));
+    const logPath = join(tempDir, "ai-full.jsonl");
+    const { client } = fakeClient(JSON.stringify({ answer: "42" }));
+
+    try {
+      // act
+      await runJsonQuery(client, testSchema, "what is the answer?", {
+        model: "test-model",
+        operation: "test-operation",
+        aiFullLogPath: logPath,
+        systemInstructions: "You are a full-log test role.",
+        temperature: 1.5,
+      });
+
+      // assert
+      const [entry] = (await readFile(logPath, "utf8"))
+        .trim()
+        .split("\n")
+        .map((line) => JSON.parse(line) as Record<string, unknown>);
+      expect(entry).toMatchObject({
+        operation: "test-operation",
+        model: "test-model",
+        temperature: 1.5,
+        attempt: 1,
+        max_attempts: 2,
+        status: "response",
+      });
+      expect(entry?.request).toMatchObject({
+        model: "test-model",
+        temperature: 1.5,
+        response_format: { type: "json_object" },
+      });
+      expect(entry?.response).toMatchObject({
+        choices: [{ message: { content: JSON.stringify({ answer: "42" }) } }],
+      });
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("writes full API request and error attempts before rethrowing API errors", async () => {
+    // arrange
+    const tempDir = await mkdtemp(join(tmpdir(), "yesand-ai-full-log-error-"));
+    const logPath = join(tempDir, "ai-full.jsonl");
+    const { client } = fakeErrorClient(new Error("provider exploded"));
+
+    try {
+      // act & assert
+      await expect(
+        runJsonQuery(client, testSchema, "what is the answer?", {
+          model: "test-model",
+          operation: "test-operation",
+          aiFullLogPath: logPath,
+        }),
+      ).rejects.toThrow("provider exploded");
+
+      const [entry] = (await readFile(logPath, "utf8"))
+        .trim()
+        .split("\n")
+        .map((line) => JSON.parse(line) as Record<string, unknown>);
+      expect(entry).toMatchObject({
+        operation: "test-operation",
+        model: "test-model",
+        attempt: 1,
+        max_attempts: 2,
+        status: "api_error",
+      });
+      expect(entry?.request).toMatchObject({ model: "test-model" });
+      expect(entry?.error).toMatchObject({ name: "Error", message: "provider exploded" });
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

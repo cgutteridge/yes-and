@@ -1,8 +1,8 @@
 # Architecture
 
 - [src/config/env.ts](../src/config/env.ts) — validates `AI_API_KEY` / `AI_BASE_URL` /
-  `AI_MODEL` / `AI_LOG_PATH` from the environment, fails fast with a clear message on
-  missing/invalid values.
+  `AI_MODEL` / `AI_LOG_PATH` / `AI_FULL_LOG_PATH` from the environment, fails fast with a clear
+  message on missing/invalid values.
 - [src/services/aiClient.ts](../src/services/aiClient.ts) — thin factory wrapping the `openai`
   SDK client, pointed at `AI_BASE_URL`.
 - [src/services/jsonQueryService.ts](../src/services/jsonQueryService.ts) — sends the prompt,
@@ -15,7 +15,8 @@
   AI attempt when configured by the command layer. The default command path writes
   `logs/ai-usage.jsonl`, including operation labels, model, the exact combined system prompt, the
   user prompt, temperature when explicitly set, provider usage metadata, and the raw AI response
-  when one exists.
+  when one exists. It also writes `logs/ai-full.jsonl`, containing the exact API request payload
+  and provider response/error for each attempt.
 - [src/schemas/exampleSchemas.ts](../src/schemas/exampleSchemas.ts) — the schema registry
   selectable via `--schema`. Add a new one by exporting a Zod schema and adding it to
   `exampleSchemas`.
@@ -52,11 +53,14 @@ for it.
 - [src/improv/prompts.ts](../src/improv/prompts.ts) — pure prompt-string builders, including
   distinct actor and audience system prompts plus one user prompt per role/stage, each taking only
   the fields that role may see.
+- [src/improv/audiencePromptTypes.ts](../src/improv/audiencePromptTypes.ts) — fixed audience
+  prompt type registry for the `audience-prompt` command ids (`location`, `problem`, `character`,
+  `item`, `complication`) and the fuller model-facing instructions for each type.
 - [src/improv/audiencePrompt.ts](../src/improv/audiencePrompt.ts) — independent audience
   prompt generator slice: loads words through a pluggable `WordSource`, selects three with an
   injectable RNG, asks the model to connect them into one audience member's private thought,
-  then asks for a very short shouted suggestion of the requested type. Both audience-model calls
-  run at temperature `1.5`.
+  translates that thought into a plain everyday association, then asks for a very short shouted
+  suggestion of the requested type. Audience-model calls run at temperature `1.5`.
 - [src/improv/director.ts](../src/improv/director.ts) — the director's two calls: a private
   notes update, then participant selection.
 - [src/improv/performer.ts](../src/improv/performer.ts) — an AI performer's `two_stage` turn:

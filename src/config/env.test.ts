@@ -15,6 +15,7 @@ describe("loadConfig", () => {
       baseUrl: undefined,
       model: "gpt-4o-mini",
       aiLogPath: "logs/ai-usage.jsonl",
+      aiFullLogPath: "logs/ai-full.jsonl",
     });
   });
 
@@ -46,6 +47,21 @@ describe("loadConfig", () => {
 
     // assert
     expect(result.aiLogPath).toBe("tmp/ai.jsonl");
+  });
+
+  it("accepts an optional AI_FULL_LOG_PATH override", () => {
+    // arrange
+    const env = {
+      AI_API_KEY: "sk-test",
+      AI_MODEL: "gpt-4o-mini",
+      AI_FULL_LOG_PATH: "tmp/ai-full.jsonl",
+    };
+
+    // act
+    const result = loadConfig(env);
+
+    // assert
+    expect(result.aiFullLogPath).toBe("tmp/ai-full.jsonl");
   });
 
   it("throws a ConfigError when AI_API_KEY is missing", () => {

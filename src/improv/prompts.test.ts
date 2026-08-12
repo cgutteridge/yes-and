@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildActorSystemPrompt,
+  buildAudienceAssociationPrompt,
   buildAudienceSystemPrompt,
   buildAudienceSuggestionPrompt,
   buildAudienceThoughtPrompt,
@@ -11,6 +12,7 @@ import {
   buildPerformerPlanPrompt,
 } from "./prompts.js";
 import { initialDirectorNotes, initialPerformerNotes } from "./notes.js";
+import { audiencePromptTypes } from "./audiencePromptTypes.js";
 import type { Participant } from "./types.js";
 import type { Performance, TurnPlan } from "./schemas.js";
 
@@ -75,49 +77,69 @@ describe("buildAudienceThoughtPrompt", () => {
   });
 });
 
+describe("buildAudienceAssociationPrompt", () => {
+  it("asks for plain-language association from the private thought", () => {
+    // arrange
+    const thought = "The velvet judge would hate my orchard pie.";
+
+    // act
+    const prompt = buildAudienceAssociationPrompt({ thought });
+
+    // assert
+    expect(prompt).toContain(thought);
+    expect(prompt).toContain("everyday association");
+    expect(prompt).toContain("plain, common language");
+    expect(prompt).toContain("Do not repeat obscure");
+  });
+});
+
 describe("buildAudienceSuggestionPrompt", () => {
-  it("includes the internal thought and requested prompt type", () => {
+  it("includes the everyday association and requested prompt type", () => {
     // arrange
     const params = {
-      thought: "I still have that borrowed trumpet in the boot.",
-      promptType: "location",
+      association: "a brass band stuck in a car park",
+      promptType: audiencePromptTypes.location,
     };
 
     // act
     const prompt = buildAudienceSuggestionPrompt(params);
 
     // assert
-    expect(prompt).toContain(params.thought);
+    expect(prompt).toContain(params.association);
     expect(prompt).toContain("for a location");
+    expect(prompt).toContain("The answer must be a place");
+    expect(prompt).toContain('type: exactly "location"');
+    expect(prompt).toContain("suggestion: what the audience member shouts");
+    expect(prompt).toContain("rationale: one concise sentence");
   });
 
-  it("places the internal thought at the end so it is the last salient context", () => {
+  it("places the everyday association at the end so it is the last salient context", () => {
     // arrange
     const params = {
-      thought: "I still have that borrowed trumpet in the boot.",
-      promptType: "location",
+      association: "a brass band stuck in a car park",
+      promptType: audiencePromptTypes.location,
     };
 
     // act
     const prompt = buildAudienceSuggestionPrompt(params);
 
     // assert
-    expect(prompt).toContain("The last thing you think about before shouting your prompt idea is:");
-    expect(prompt.trim().endsWith(params.thought)).toBe(true);
+    expect(prompt).toContain("The last thing you think about before shouting your suggestion is:");
+    expect(prompt.trim().endsWith(params.association)).toBe(true);
   });
 
   it("requires a very short shouted suggestion", () => {
     // arrange
     const params = {
-      thought: "The sink at work sounded like a fax machine.",
-      promptType: "object",
+      association: "a noisy office sink",
+      promptType: audiencePromptTypes.item,
     };
 
     // act
     const prompt = buildAudienceSuggestionPrompt(params);
 
     // assert
-    expect(prompt).toContain("very short audience suggestion");
+    expect(prompt).toContain("The suggestion should be very short");
     expect(prompt).toContain("brief enough to be heard clearly");
   });
 });

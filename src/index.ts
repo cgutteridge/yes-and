@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { config as loadDotenv } from "dotenv";
 import { runCommand } from "./cli/runCommand.js";
 import { runAudiencePromptCommand } from "./cli/audiencePromptCommand.js";
+import { formatAudiencePromptTypeIds } from "./improv/audiencePromptTypes.js";
 import { runQueryCommand, type QueryCommandOptions } from "./cli/queryCommand.js";
 import { runSceneCommand, type SceneCommandOptions } from "./cli/sceneCommand.js";
 import { exampleSchemas } from "./schemas/exampleSchemas.js";
@@ -44,7 +45,7 @@ program
 program
   .command("audience-prompt")
   .description("Generate a simulated audience shout for a requested prompt type")
-  .argument("<type>", 'kind of prompt the performers ask for, e.g. "location" or "object"')
+  .argument("<type>", `prompt type id (${formatAudiencePromptTypeIds()})`)
   .action(async (promptType: string) => {
     await runCommand(() => runAudiencePromptCommand(promptType));
   });

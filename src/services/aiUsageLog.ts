@@ -19,11 +19,33 @@ export interface AiUsageLogEntry {
   response?: string;
 }
 
+export interface AiFullLogEntry {
+  timestamp: string;
+  operation: string;
+  model: string;
+  temperature?: number;
+  attempt: number;
+  max_attempts: number;
+  status: "response" | "api_error";
+  request: unknown;
+  response?: unknown;
+  error?: unknown;
+}
+
 export async function appendAiUsageLog(path: string, entry: AiUsageLogEntry): Promise<void> {
   try {
     await mkdir(dirname(path), { recursive: true });
     await appendFile(path, `${JSON.stringify(entry)}\n`, "utf8");
   } catch (error) {
     logger.debug(`failed to write AI usage log "${path}": ${(error as Error).message}`);
+  }
+}
+
+export async function appendAiFullLog(path: string, entry: AiFullLogEntry): Promise<void> {
+  try {
+    await mkdir(dirname(path), { recursive: true });
+    await appendFile(path, `${JSON.stringify(entry)}\n`, "utf8");
+  } catch (error) {
+    logger.debug(`failed to write full AI log "${path}": ${(error as Error).message}`);
   }
 }

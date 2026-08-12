@@ -18,6 +18,7 @@ Fill in `.env`:
 - `AI_BASE_URL` — optional. Defaults to `https://api.openai.com/v1`. Point this at any
   OpenAI-compatible endpoint instead (Azure OpenAI, OpenRouter, a local model server, etc).
 - `AI_LOG_PATH` — optional. Defaults to `logs/ai-usage.jsonl`.
+- `AI_FULL_LOG_PATH` — optional. Defaults to `logs/ai-full.jsonl`.
 
 ## Usage
 
@@ -30,6 +31,8 @@ simulated-audience prompt generator).
     npm run dev -- query "Is this review positive: 'best pizza I've ever had'" --schema sentiment
     npm run dev -- scene --config fixtures/scenes/demo-scene.json
     npm run audience-prompt -- "location"
+
+Supported audience prompt type ids: `location`, `problem`, `character`, `item`, `complication`.
 
 Or build and run the bundled output:
 
@@ -44,6 +47,9 @@ operation name, model, system prompt, user prompt, explicit temperature when set
 the provider returns it, and the raw AI response when one exists. Override the location with
 `AI_LOG_PATH`.
 
+The full API request and provider response/error for each real attempt is also appended to
+`logs/ai-full.jsonl` by default. Override the location with `AI_FULL_LOG_PATH`.
+
 ## How it works
 
 See [docs/architecture.md](docs/architecture.md).
@@ -53,7 +59,7 @@ See [docs/architecture.md](docs/architecture.md).
 | Command                             | Purpose                                                                                |
 | ----------------------------------- | -------------------------------------------------------------------------------------- |
 | `npm run dev -- <args>`             | Run the CLI from source (tsx)                                                          |
-| `npm run audience-prompt -- <type>` | Demo the simulated-audience prompt generator for a prompt type such as `location`      |
+| `npm run audience-prompt -- <type>` | Demo the simulated-audience prompt generator for a supported prompt type id            |
 | `npm run build`                     | Bundle to `dist/index.js` (esbuild)                                                    |
 | `npm start -- <args>`               | Run the built bundle                                                                   |
 | `npm run lint` / `lint:fix`         | ESLint                                                                                 |

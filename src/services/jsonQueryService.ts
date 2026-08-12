@@ -1,6 +1,6 @@
 import type OpenAI from "openai";
 import { z } from "zod";
-import { appendAiUsageLog } from "./aiUsageLog.js";
+import { appendAiFullLog, appendAiUsageLog } from "./aiUsageLog.js";
 import { logger } from "../utils/logger.js";
 
 export interface JsonQueryOptions {
@@ -8,6 +8,7 @@ export interface JsonQueryOptions {
   maxAttempts?: number;
   operation?: string;
   aiLogPath?: string;
+  aiFullLogPath?: string;
   systemInstructions?: string;
   temperature?: number;
 }
@@ -47,6 +48,19 @@ function buildSystemPrompt(schema: z.ZodType<unknown>, systemInstructions?: stri
   ].join("\n");
 }
 
+function serializeApiError(error: unknown): unknown {
+  if (!(error instanceof Error)) {
+    return error;
+  }
+
+  return {
+    ...error,
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+  };
+}
+
 /**
  * Queries the model for JSON matching `schema`, validating the response and
  * retrying with the validation error fed back to the model on failure.
@@ -71,14 +85,28 @@ export async function runJsonQuery<T>(
     logger.debug(`AI query "${operation}" attempt ${attempt}/${maxAttempts}`);
 
     let completion: OpenAI.Chat.Completions.ChatCompletion;
+    const request = {
+      model: options.model,
+      messages,
+      ...(options.temperature === undefined ? {} : { temperature: options.temperature }),
+      response_format: { type: "json_object" as const },
+    };
     try {
-      completion = await client.chat.completions.create({
-        model: options.model,
-        messages,
-        ...(options.temperature === undefined ? {} : { temperature: options.temperature }),
-        response_format: { type: "json_object" },
-      });
+      completion = await client.chat.completions.create(request);
     } catch (error) {
+      if (options.aiFullLogPath) {
+        await appendAiFullLog(options.aiFullLogPath, {
+          timestamp: new Date().toISOString(),
+          operation,
+          model: options.model,
+          temperature: options.temperature,
+          attempt,
+          max_attempts: maxAttempts,
+          status: "api_error",
+          request,
+          error: serializeApiError(error),
+        });
+      }
       if (options.aiLogPath) {
         await appendAiUsageLog(options.aiLogPath, {
           timestamp: new Date().toISOString(),
@@ -94,6 +122,20 @@ export async function runJsonQuery<T>(
         });
       }
       throw error;
+    }
+
+    if (options.aiFullLogPath) {
+      await appendAiFullLog(options.aiFullLogPath, {
+        timestamp: new Date().toISOString(),
+        operation,
+        model: options.model,
+        temperature: options.temperature,
+        attempt,
+        max_attempts: maxAttempts,
+        status: "response",
+        request,
+        response: completion,
+      });
     }
 
     const choice = completion.choices[0];

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { AudiencePromptTypeId } from "./audiencePromptTypes.js";
 
 /**
  * Model-I/O Zod schemas for the improv orchestration engine — everything a
@@ -178,20 +179,29 @@ export const audienceThoughtSchema = z.object({
 });
 export type AudienceThought = z.infer<typeof audienceThoughtSchema>;
 
-export const audienceSuggestionSchema = z
-  .object({
-    prompt: z.string().trim().min(1),
-  })
-  .superRefine((value, ctx) => {
-    const totalWords = countWords(value.prompt);
-    if (totalWords > AUDIENCE_PROMPT_MAX_WORDS) {
-      ctx.addIssue({
-        code: "custom",
-        message:
-          `The audience prompt contains ${totalWords} words, which exceeds the ` +
-          `${AUDIENCE_PROMPT_MAX_WORDS}-word maximum. Shorten it so actors can hear it.`,
-        path: ["prompt"],
-      });
-    }
-  });
-export type AudienceSuggestion = z.infer<typeof audienceSuggestionSchema>;
+export const audienceAssociationSchema = z.object({
+  association: z.string().trim().min(1),
+});
+export type AudienceAssociation = z.infer<typeof audienceAssociationSchema>;
+
+export function buildAudienceSuggestionSchema(promptType: AudiencePromptTypeId) {
+  return z
+    .object({
+      type: z.literal(promptType),
+      suggestion: z.string().trim().min(1),
+      rationale: z.string().trim().min(1),
+    })
+    .superRefine((value, ctx) => {
+      const totalWords = countWords(value.suggestion);
+      if (totalWords > AUDIENCE_PROMPT_MAX_WORDS) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            `The audience suggestion contains ${totalWords} words, which exceeds the ` +
+            `${AUDIENCE_PROMPT_MAX_WORDS}-word maximum. Shorten it so actors can hear it.`,
+          path: ["suggestion"],
+        });
+      }
+    });
+}
+export type AudienceSuggestion = z.infer<ReturnType<typeof buildAudienceSuggestionSchema>>;
