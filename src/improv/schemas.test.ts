@@ -3,6 +3,7 @@ import {
   audienceAssociationSchema,
   audienceThoughtSchema,
   buildAudienceSuggestionSchema,
+  buildDirectorSceneSetupSchema,
   buildDirectorSelectionSchema,
   countWords,
   performanceSchema,
@@ -217,6 +218,72 @@ describe("audienceSuggestionSchema", () => {
       type: "location",
       suggestion: "a very confusing passport office behind the old choir",
       rationale: "It connects to passports and is a location.",
+    };
+
+    // act
+    const result = schema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(false);
+  });
+});
+
+const setupCandidates = [
+  { id: "location-1", type: "location" as const, suggestion: "a moonlit laundrette" },
+  { id: "item-1", type: "item" as const, suggestion: "a cracked trophy" },
+  { id: "challenge-1", type: "challenge" as const, suggestion: "pass the inspection" },
+  { id: "complication-1", type: "complication" as const, suggestion: "the boss arrives early" },
+  { id: "character-1", type: "character" as const, suggestion: "a nervous landlord" },
+  { id: "character-2", type: "character" as const, suggestion: "a retired magician" },
+];
+
+describe("buildDirectorSceneSetupSchema", () => {
+  it("accepts one id per required prompt type and distinct character ids", () => {
+    // arrange
+    const schema = buildDirectorSceneSetupSchema(setupCandidates, 2);
+    const candidate = {
+      location: "location-1",
+      item: "item-1",
+      challenge: "challenge-1",
+      complication: "complication-1",
+      characters: ["character-1", "character-2"],
+      rationale: "The setup has playable pressure and contrasting roles.",
+    };
+
+    // act
+    const result = schema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a candidate id from the wrong taxonomical type", () => {
+    // arrange
+    const schema = buildDirectorSceneSetupSchema(setupCandidates, 2);
+    const candidate = {
+      location: "item-1",
+      item: "item-1",
+      challenge: "challenge-1",
+      complication: "complication-1",
+      characters: ["character-1", "character-2"],
+    };
+
+    // act
+    const result = schema.safeParse(candidate);
+
+    // assert
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects duplicate character ids", () => {
+    // arrange
+    const schema = buildDirectorSceneSetupSchema(setupCandidates, 2);
+    const candidate = {
+      location: "location-1",
+      item: "item-1",
+      challenge: "challenge-1",
+      complication: "complication-1",
+      characters: ["character-1", "character-1"],
     };
 
     // act

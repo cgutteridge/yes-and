@@ -6,6 +6,7 @@ import {
   buildAudienceSuggestionPrompt,
   buildAudienceThoughtPrompt,
   buildDirectorNotesUpdatePrompt,
+  buildDirectorSceneSetupPrompt,
   buildDirectorSelectionPrompt,
   buildPerformerNotesUpdatePrompt,
   buildPerformerPerformancePrompt,
@@ -212,6 +213,26 @@ describe("buildDirectorSelectionPrompt", () => {
 
     // assert
     expect(prompt).toContain("7 of a maximum 20 turns");
+  });
+});
+
+describe("buildDirectorSceneSetupPrompt", () => {
+  it("asks the director to choose setup candidates by id", () => {
+    // arrange
+    const candidates = [
+      { id: "location-1", type: "location" as const, suggestion: "a laundrette" },
+      { id: "character-1", type: "character" as const, suggestion: "a landlord" },
+    ];
+
+    // act
+    const prompt = buildDirectorSceneSetupPrompt({ candidates, characterCount: 2 });
+
+    // assert
+    expect(prompt).toContain("one location, one item, one challenge, one complication");
+    expect(prompt).toContain("2 distinct");
+    expect(prompt).toContain("Pick by candidate id only");
+    expect(prompt).toContain('"id":"location-1"');
+    expect(prompt).toContain("rationale is private");
   });
 });
 

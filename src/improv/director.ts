@@ -4,14 +4,42 @@ import { logger } from "../utils/logger.js";
 import { applyDirectorNotesPatch } from "./notes.js";
 import {
   buildDirectorNotesUpdatePrompt,
+  buildDirectorSceneSetupPrompt,
   buildDirectorSelectionPrompt,
   type DirectorParticipant,
 } from "./prompts.js";
 import {
+  buildDirectorSceneSetupSchema,
   buildDirectorSelectionSchema,
   directorNotesPatchSchema,
+  type DirectorSceneSetup,
+  type DirectorSceneSetupCandidate,
   type DirectorNotes,
 } from "./schemas.js";
+
+const DIRECTOR_TEMPERATURE = 0.9;
+
+export async function selectSceneSetup(
+  client: OpenAI,
+  model: string,
+  params: {
+    candidates: DirectorSceneSetupCandidate[];
+    characterCount: number;
+    aiLogPath?: string;
+    aiFullLogPath?: string;
+  },
+): Promise<DirectorSceneSetup> {
+  const schema = buildDirectorSceneSetupSchema(params.candidates, params.characterCount);
+  const prompt = buildDirectorSceneSetupPrompt(params);
+  return runJsonQuery(client, schema, prompt, {
+    model,
+    maxAttempts: 3,
+    operation: "scene:director-setup",
+    aiLogPath: params.aiLogPath,
+    aiFullLogPath: params.aiFullLogPath,
+    temperature: DIRECTOR_TEMPERATURE,
+  });
+}
 
 export async function updateDirectorNotes(
   client: OpenAI,

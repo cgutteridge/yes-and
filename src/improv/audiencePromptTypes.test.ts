@@ -12,6 +12,7 @@ describe("audiencePromptTypes", () => {
     expect(audiencePromptTypeIds).toEqual([
       "location",
       "problem",
+      "challenge",
       "character",
       "item",
       "complication",
@@ -35,6 +36,8 @@ describe("audiencePromptTypes", () => {
 
   it("formats the id list for CLI help and errors", () => {
     // assert
-    expect(formatAudiencePromptTypeIds()).toBe("location, problem, character, item, complication");
+    expect(formatAudiencePromptTypeIds()).toBe(
+      "location, problem, challenge, character, item, complication",
+    );
   });
 });

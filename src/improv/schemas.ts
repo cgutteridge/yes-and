@@ -174,6 +174,52 @@ export function buildDirectorSelectionSchema(participantIds: string[]) {
 }
 export type DirectorSelection = z.infer<ReturnType<typeof buildDirectorSelectionSchema>>;
 
+export interface DirectorSceneSetupCandidate {
+  id: string;
+  type: AudiencePromptTypeId;
+  suggestion: string;
+}
+
+function buildCandidateIdSchema(
+  candidates: DirectorSceneSetupCandidate[],
+  promptType: AudiencePromptTypeId,
+) {
+  const ids = candidates
+    .filter((candidate) => candidate.type === promptType)
+    .map((candidate) => candidate.id);
+  const [first, ...rest] = ids;
+  if (first === undefined) {
+    throw new Error(`buildDirectorSceneSetupSchema requires at least one ${promptType} candidate`);
+  }
+  return z.enum([first, ...rest]);
+}
+
+export function buildDirectorSceneSetupSchema(
+  candidates: DirectorSceneSetupCandidate[],
+  characterCount: number,
+) {
+  const characterIdSchema = buildCandidateIdSchema(candidates, "character");
+  return z
+    .object({
+      location: buildCandidateIdSchema(candidates, "location"),
+      item: buildCandidateIdSchema(candidates, "item"),
+      challenge: buildCandidateIdSchema(candidates, "challenge"),
+      complication: buildCandidateIdSchema(candidates, "complication"),
+      characters: z.array(characterIdSchema).length(characterCount),
+      rationale: z.string().trim().min(1).optional(),
+    })
+    .superRefine((value, ctx) => {
+      if (new Set(value.characters).size !== value.characters.length) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Character candidate ids must be distinct.",
+          path: ["characters"],
+        });
+      }
+    });
+}
+export type DirectorSceneSetup = z.infer<ReturnType<typeof buildDirectorSceneSetupSchema>>;
+
 export const audienceThoughtSchema = z.object({
   thought: z.string().trim().min(1),
 });

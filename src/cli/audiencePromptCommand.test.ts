@@ -30,7 +30,7 @@ describe("runAudiencePromptCommand", () => {
 
     // assert
     expect(errorSpy).toHaveBeenCalledWith(
-      'unknown audience prompt type "object". Available: location, problem, character, item, complication',
+      'unknown audience prompt type "object". Available: location, problem, challenge, character, item, complication',
     );
     expect(process.exitCode).toBe(1);
 

@@ -1,6 +1,7 @@
 export const audiencePromptTypeIds = [
   "location",
   "problem",
+  "challenge",
   "character",
   "item",
   "complication",
@@ -28,6 +29,14 @@ export const audiencePromptTypes: Record<AudiencePromptTypeId, AudiencePromptTyp
     instructions:
       "The answer must be a problem, complaint, predicament, obstacle, or immediate difficulty " +
       "someone could be dealing with. Prefer plain present-tense phrasing.",
+  },
+  challenge: {
+    id: "challenge",
+    requestText: "a challenge",
+    instructions:
+      "The answer must be a playable challenge, task, obstacle, pressure, contest, or difficulty " +
+      "the characters could actively deal with during a scene. Do not answer with a place, object, " +
+      "character, or full plot summary.",
   },
   character: {
     id: "character",

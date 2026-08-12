@@ -22,17 +22,20 @@ Fill in `.env`:
 
 ## Usage
 
-Three subcommands: `query` (the original generic AI-query CLI), `scene`
+Four subcommands: `query` (the original generic AI-query CLI), `scene`
 (runs a turn-based improv scene from a scene-config file — see
-[initial-plan.md](initial-plan.md)), and `audience-prompt` (demos the
-simulated-audience prompt generator).
+[initial-plan.md](initial-plan.md)), `generated-scene` (generates audience
+suggestions, asks the director to choose a setup, then runs the scene), and
+`audience-prompt` (demos the simulated-audience prompt generator).
 
     npm run dev -- query "Summarize the plot of Hamlet" --schema summary
     npm run dev -- query "Is this review positive: 'best pizza I've ever had'" --schema sentiment
     npm run dev -- scene --config fixtures/scenes/demo-scene.json
+    npm run generated-scene -- --maximum-turns 24
     npm run audience-prompt -- "location"
 
-Supported audience prompt type ids: `location`, `problem`, `character`, `item`, `complication`.
+Supported audience prompt type ids: `location`, `problem`, `challenge`, `character`, `item`,
+`complication`.
 
 Or build and run the bundled output:
 
@@ -60,6 +63,7 @@ See [docs/architecture.md](docs/architecture.md).
 | ----------------------------------- | -------------------------------------------------------------------------------------- |
 | `npm run dev -- <args>`             | Run the CLI from source (tsx)                                                          |
 | `npm run audience-prompt -- <type>` | Demo the simulated-audience prompt generator for a supported prompt type id            |
+| `npm run generated-scene -- <args>` | Generate audience suggestions, director-select a setup, and run a two-actor AI scene   |
 | `npm run build`                     | Bundle to `dist/index.js` (esbuild)                                                    |
 | `npm start -- <args>`               | Run the built bundle                                                                   |
 | `npm run lint` / `lint:fix`         | ESLint                                                                                 |

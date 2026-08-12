@@ -2,6 +2,10 @@ import { Command } from "commander";
 import { config as loadDotenv } from "dotenv";
 import { runCommand } from "./cli/runCommand.js";
 import { runAudiencePromptCommand } from "./cli/audiencePromptCommand.js";
+import {
+  runGeneratedSceneCommand,
+  type GeneratedSceneCommandOptions,
+} from "./cli/generatedSceneCommand.js";
 import { formatAudiencePromptTypeIds } from "./improv/audiencePromptTypes.js";
 import { runQueryCommand, type QueryCommandOptions } from "./cli/queryCommand.js";
 import { runSceneCommand, type SceneCommandOptions } from "./cli/sceneCommand.js";
@@ -40,6 +44,19 @@ program
   .requiredOption("-c, --config <path>", "path to a scene-config JSON file")
   .action(async (options: SceneCommandOptions) => {
     await runCommand(() => runSceneCommand(options));
+  });
+
+program
+  .command("generated-scene")
+  .description("Generate audience suggestions, let the director choose a setup, then run a scene")
+  .option(
+    "--maximum-turns <count>",
+    "maximum turns before the scene is stopped",
+    (value: string) => Number.parseInt(value, 10),
+    24,
+  )
+  .action(async (options: GeneratedSceneCommandOptions) => {
+    await runCommand(() => runGeneratedSceneCommand(options));
   });
 
 program

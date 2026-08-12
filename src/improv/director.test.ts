@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { selectNextParticipant, updateDirectorNotes } from "./director.js";
+import { selectNextParticipant, selectSceneSetup, updateDirectorNotes } from "./director.js";
 import { initialDirectorNotes } from "./notes.js";
 import { fakeClient } from "./testing/fakeClient.js";
 import type { DirectorParticipant } from "./prompts.js";
@@ -63,6 +63,39 @@ describe("selectNextParticipant", () => {
     // assert
     expect(result).toBe("leo");
     expect(create).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("selectSceneSetup", () => {
+  const setupCandidates = [
+    { id: "location-1", type: "location" as const, suggestion: "a laundrette" },
+    { id: "item-1", type: "item" as const, suggestion: "a trophy" },
+    { id: "challenge-1", type: "challenge" as const, suggestion: "pass inspection" },
+    { id: "complication-1", type: "complication" as const, suggestion: "the boss arrives" },
+    { id: "character-1", type: "character" as const, suggestion: "a landlord" },
+    { id: "character-2", type: "character" as const, suggestion: "a magician" },
+  ];
+
+  it("returns the setup candidate ids the model selects", async () => {
+    // arrange
+    const { client } = fakeClient(
+      JSON.stringify({
+        location: "location-1",
+        item: "item-1",
+        challenge: "challenge-1",
+        complication: "complication-1",
+        characters: ["character-1", "character-2"],
+      }),
+    );
+
+    // act
+    const result = await selectSceneSetup(client, "test-model", {
+      candidates: setupCandidates,
+      characterCount: 2,
+    });
+
+    // assert
+    expect(result.characters).toEqual(["character-1", "character-2"]);
   });
 });
 

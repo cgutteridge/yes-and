@@ -1,4 +1,10 @@
-import type { DirectorNotes, Performance, PerformerNotes, TurnPlan } from "./schemas.js";
+import type {
+  DirectorNotes,
+  DirectorSceneSetupCandidate,
+  Performance,
+  PerformerNotes,
+  TurnPlan,
+} from "./schemas.js";
 import type { Participant } from "./types.js";
 import type { AudiencePromptTypeDefinition } from "./audiencePromptTypes.js";
 
@@ -229,6 +235,29 @@ ${JSON.stringify(params.notes)}
 
 Public transcript:
 ${params.transcript}`;
+}
+
+export function buildDirectorSceneSetupPrompt(params: {
+  candidates: DirectorSceneSetupCandidate[];
+  characterCount: number;
+}): string {
+  return `You are the silent director setting up a turn-based improvised scene.
+
+The audience has shouted several candidate suggestions. Choose the most usable setup for actors:
+one location, one item, one challenge, one complication, and ${params.characterCount} distinct
+character or role suggestions.
+
+Pick by candidate id only. Prefer suggestions that are plain, playable, specific enough to start
+from, and compatible without becoming a full plotted premise. The challenge should be something
+characters can actively deal with. The complication should be an extra pressure or wrinkle that
+can enter or color the scene. Character picks should be roles the actors can inhabit without
+needing a biography.
+
+Return a JSON response matching the required schema. The selected candidate ids will be shown to
+the actors as the opening prompts; your rationale is private and is not shown to them.
+
+Candidate suggestions:
+${JSON.stringify(params.candidates)}`;
 }
 
 export function buildAudienceThoughtPrompt(params: { seedWords: string[] }): string {

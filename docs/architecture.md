@@ -20,14 +20,17 @@
 - [src/schemas/exampleSchemas.ts](../src/schemas/exampleSchemas.ts) — the schema registry
   selectable via `--schema`. Add a new one by exporting a Zod schema and adding it to
   `exampleSchemas`.
-- [src/index.ts](../src/index.ts) — thin Commander entry point: wires the `query` and `scene`
-  subcommands to `src/cli/*` and does nothing else.
+- [src/index.ts](../src/index.ts) — thin Commander entry point: wires subcommands to `src/cli/*`
+  and does nothing else.
 - [src/cli/runCommand.ts](../src/cli/runCommand.ts) — shared error-dispatch wrapper for every
   command action: known error types are logged with a non-zero exit code, anything else rethrows.
 - [src/cli/queryCommand.ts](../src/cli/queryCommand.ts) — the original generic-CLI behavior
   (query an API, validate against an example schema), extracted out of `index.ts` unchanged.
 - [src/cli/sceneCommand.ts](../src/cli/sceneCommand.ts) — loads a scene-config file, runs a
   scene end-to-end, prints the resulting transcript as JSON.
+- [src/cli/generatedSceneCommand.ts](../src/cli/generatedSceneCommand.ts) — generates audience
+  suggestions for a full scene setup, lets the director choose the usable ones, builds a two-actor
+  scene config, runs it, and prints setup plus transcript JSON.
 - [src/cli/audiencePromptCommand.ts](../src/cli/audiencePromptCommand.ts) — demo wrapper for the
   simulated audience generator. It prints the generator walkthrough to stderr via `logger` and
   reserves stdout for the final JSON result.
@@ -55,16 +58,22 @@ for it.
   the fields that role may see.
 - [src/improv/audiencePromptTypes.ts](../src/improv/audiencePromptTypes.ts) — fixed audience
   prompt type registry for the `audience-prompt` command ids (`location`, `problem`, `character`,
-  `item`, `complication`) and the fuller model-facing instructions for each type.
+  `challenge`, `item`, `complication`) and the fuller model-facing instructions for each type.
 - [src/improv/audiencePrompt.ts](../src/improv/audiencePrompt.ts) — independent audience
   prompt generator slice: loads words through a pluggable `WordSource`, selects three with an
   injectable RNG, asks the model to connect them into one audience member's private thought,
   translates that thought into a plain everyday association, then asks for a very short shouted
   suggestion of the requested type. Audience-model calls run at temperature `1.5`.
 - [src/improv/director.ts](../src/improv/director.ts) — the director's two calls: a private
-  notes update, then participant selection.
+  notes update, then participant selection. It also owns the pre-scene setup selection call used by
+  generated scenes.
 - [src/improv/performer.ts](../src/improv/performer.ts) — an AI performer's `two_stage` turn:
   private plan, public performance, private notes update. Performer calls run at temperature `1.2`.
+- [src/improv/sceneSetup.ts](../src/improv/sceneSetup.ts) — generated-scene setup flow: creates
+  three audience suggestions each for location, item, challenge, and complication, plus three
+  character options per required actor; asks the director to choose one setup; then converts those
+  selected prompts into the existing `SceneConfig` shape. Actors see only the selected setup in the
+  opening prompt, their own character seed, public acting history, and their own private memory.
 - [src/improv/sceneConfig.ts](../src/improv/sceneConfig.ts) — the on-disk scene-config schema
   and loader; also where an unsupported (deferred) config value is rejected with a clear error.
 - [src/improv/orchestrator.ts](../src/improv/orchestrator.ts) — `runScene`, the main loop tying
