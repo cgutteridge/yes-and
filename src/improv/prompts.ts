@@ -301,12 +301,25 @@ What do you shout out off the top of your head?
 Return a JSON response matching the required schema. The suggestion should be very short and
 brief enough to be heard clearly by actors on stage. Do not turn it into a full premise.
 
+Shout the thing itself, not a description of it. Favor a blurted word or short noun phrase --
+one to four words -- over a written sentence or clause, and keep any explanation of the
+connection out of the suggestion; that belongs in the rationale instead. For example, if the
+association makes you think of dust settling on cloth, shout "unexpected grit" -- not "a sudden
+fine layer of grit dusting everything." The second one reads like a description written for a
+page, not something a person yells across a room.
+
+Derive the suggestion from the specific content of the last thought below, even when it is
+abstract or odd -- find whatever is genuinely nearest to it instead of reaching for a generic,
+stock, or unrelated answer just because the thought is hard to convert. A safe cliché that only
+contrasts with the thought does not count as a real connection.
+
 Use the required fields this way:
 - type: exactly "${params.promptType.id}".
-- suggestion: what the audience member shouts.
-- rationale: one concise sentence explaining how the suggestion connects to the last thought and
-  confirming it satisfies the requested type. Keep this as a brief audit note, not private
-  step-by-step reasoning.
+- suggestion: what the audience member shouts -- the pithy thing itself, in as few words as
+  possible.
+- rationale: one concise sentence explaining specifically how the suggestion was derived from the
+  last thought (not merely how it contrasts with it) and confirming it satisfies the requested
+  type. Keep this as a brief audit note, not private step-by-step reasoning.
 
 Prompt-type requirement:
 ${params.promptType.instructions}

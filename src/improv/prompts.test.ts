@@ -143,6 +143,25 @@ describe("buildAudienceSuggestionPrompt", () => {
     expect(prompt).toContain("The suggestion should be very short");
     expect(prompt).toContain("brief enough to be heard clearly");
   });
+
+  it("pushes for a pithy blurted word or phrase over a written description", () => {
+    // arrange
+    const params = {
+      association: "dust hit your curtain",
+      promptType: audiencePromptTypes.complication,
+    };
+
+    // act
+    const prompt = buildAudienceSuggestionPrompt(params);
+
+    // assert -- guards against the model regressing to a literary description
+    // like "a sudden fine layer of grit dusting everything" instead of a
+    // blurted "unexpected grit" (see logs/ai-full.jsonl for the real example).
+    expect(prompt).toContain("Shout the thing itself, not a description of it");
+    expect(prompt).toContain("one to four words");
+    expect(prompt).toContain('"unexpected grit"');
+    expect(prompt).toContain("the pithy thing itself");
+  });
 });
 
 describe("buildDirectorNotesUpdatePrompt", () => {
