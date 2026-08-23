@@ -1,0 +1,963 @@
+# Curated seed pool for CuratedWordSource. One entry per line; blank lines and
+# lines starting with "#" are ignored by the loader, so they're free to use as
+# section breaks/comments. Every entry is a bare name, noun, or short noun
+# phrase -- never a quoted line of dialogue, lyric, or other copyrighted
+# passage. See README.md for why that line is the one that matters.
+#
+# STANDING RULE: no Harry Potter references of any kind, ever -- not the
+# franchise name, not characters, not places, not objects, not spells. Do not
+# reintroduce any when editing this file.
+
+# --- concrete nouns ---
+lantern
+kettle
+umbrella
+ladder
+bicycle
+blanket
+mirror
+bucket
+envelope
+hammer
+telescope
+suitcase
+candle
+anchor
+drum
+violin
+compass
+basket
+thermostat
+mailbox
+doorknob
+pillow
+faucet
+calendar
+wallet
+sponge
+whistle
+trophy
+birdcage
+wheelbarrow
+typewriter
+accordion
+canoe
+chandelier
+corkboard
+doormat
+easel
+fishbowl
+garden hose
+harmonica
+icebox
+jukebox
+kaleidoscope
+lawn chair
+magnifying glass
+netting
+oil can
+parasol
+quilt
+rocking chair
+saddle
+tackle box
+umbrella stand
+vase
+washboard
+xylophone
+yo-yo
+zipper
+binoculars
+clothespin
+doily
+pocket watch
+snow globe
+weather vane
+
+# --- verbs ---
+whisper
+stumble
+juggle
+argue
+wander
+sneeze
+giggle
+collapse
+trespass
+hesitate
+eavesdrop
+improvise
+retreat
+celebrate
+complain
+rehearse
+interrupt
+wobble
+flinch
+gossip
+haggle
+loiter
+meddle
+mumble
+pace
+ponder
+quarrel
+ramble
+scheme
+shuffle
+sulk
+tiptoe
+unravel
+vent
+wince
+yawn
+zigzag
+bicker
+dawdle
+fidget
+procrastinate
+overshare
+
+# --- occupations ---
+plumber
+librarian
+referee
+florist
+electrician
+bartender
+surgeon
+janitor
+accountant
+lifeguard
+locksmith
+tailor
+chauffeur
+barista
+mechanic
+dentist
+photographer
+translator
+beekeeper
+umpire
+blacksmith
+choreographer
+courier
+curator
+diplomat
+embalmer
+falconer
+geologist
+herbalist
+illustrator
+jeweler
+lighthouse keeper
+midwife
+notary
+optometrist
+park ranger
+quarry worker
+roadie
+stagehand
+taxidermist
+upholsterer
+valet
+watchmaker
+welder
+zookeeper
+crossing guard
+food critic
+puppeteer
+ghostwriter
+
+# --- institutions ---
+hospital
+courthouse
+seminary
+orphanage
+brewery
+embassy
+monastery
+shipyard
+greenhouse
+aquarium
+cannery
+foundry
+academy
+asylum
+garrison
+parliament
+laboratory
+workshop
+cathedral
+quarantine
+arboretum
+armory
+bathhouse
+conservatory
+distillery
+guildhall
+hatchery
+infirmary
+mint
+observatory
+penitentiary
+planetarium
+rectory
+sanatorium
+shelter
+stockyard
+tannery
+university
+vineyard
+wharf
+
+# --- emotions ---
+jealousy
+nostalgia
+embarrassment
+relief
+dread
+curiosity
+boredom
+guilt
+pride
+longing
+panic
+awe
+resentment
+tenderness
+suspicion
+gratitude
+loneliness
+excitement
+shame
+defiance
+affection
+anxiety
+bitterness
+contentment
+denial
+envy
+frustration
+grief
+hope
+indignation
+mischief
+optimism
+paranoia
+regret
+reverence
+satisfaction
+stubbornness
+triumph
+vulnerability
+wistfulness
+wonder
+
+# --- materials ---
+velvet
+plywood
+gravel
+cardboard
+porcelain
+rubber
+granite
+wax
+burlap
+tinfoil
+plaster
+sawdust
+linen
+charcoal
+gelatin
+asphalt
+wicker
+chalk
+resin
+felt
+brass
+ceramic
+clay
+copper
+cork
+denim
+flannel
+foam
+marble
+moss
+pewter
+sandstone
+silk
+slate
+straw
+suede
+tar
+tweed
+vinyl
+yarn
+
+# --- social situations ---
+reunion
+eviction
+audition
+funeral
+interrogation
+graduation
+layoff
+intervention
+inheritance
+elopement
+standoff
+promotion
+demotion
+confession
+proposal
+retirement
+blind date
+potluck
+recital
+roast
+sting operation
+stakeout
+scavenger hunt
+talent show
+timeshare pitch
+welcome wagon
+yard sale
+book club
+open mic
+office party
+ribbon cutting
+family feud
+garage sale
+hostage negotiation
+initiation ceremony
+surprise party
+company retreat
+awkward toast
+
+# --- pop culture: classic literature, myth, and public domain ---
+Dracula
+Frankenstein's monster
+Sherlock Holmes
+Dr. Watson
+Robin Hood
+King Arthur
+Excalibur
+the Holy Grail
+Pandora's box
+the Trojan horse
+Medusa
+a phoenix
+a minotaur
+a sphinx
+Alice in Wonderland
+the White Rabbit
+the Mad Hatter
+the Cheshire Cat
+Peter Pan
+Captain Hook
+Moby Dick
+the Wizard of Oz
+the Tin Man
+the Scarecrow
+Dorothy's ruby slippers
+Dr. Jekyll and Mr. Hyde
+the Phantom of the Opera
+the headless horseman
+Sherwood Forest
+Camelot
+a Cyclops
+Icarus's wings
+the Kraken
+Cerberus
+a genie's lamp
+Rapunzel's tower
+the Big Bad Wolf
+the Three Little Pigs
+Jack's beanstalk
+the Sword in the Stone
+a fairy godmother
+a wicked stepmother
+a poisoned apple
+a glass slipper
+a pumpkin carriage
+Gulliver's travels
+the Ghost of Christmas Past
+
+# --- pop culture: modern film, TV, and game icons (names/objects only, never quoted lines) ---
+a lightsaber
+the Death Star
+a Jedi
+a Sith lord
+Yoda
+the Millennium Falcon
+a Wookiee
+a TARDIS
+a sonic screwdriver
+the Batmobile
+the Batcave
+the Infinity Gauntlet
+Gotham City
+Krypton
+a superhero origin story
+a secret identity
+Middle-earth
+the One Ring
+the Shire
+a hobbit's burrow
+Mordor
+a dragon's hoard
+Jurassic Park
+a velociraptor
+an alien facehugger
+the Matrix
+a red pill
+a time machine
+a DeLorean
+a Pokeball
+a zombie apocalypse
+a vampire's coffin
+a werewolf's full moon
+a haunted mansion
+a supervillain's lair
+a spy's exploding pen
+a car chase
+a heist crew
+a getaway van
+a wrestling entrance
+a game show buzzer
+a reality TV confessional booth
+a cooking show timer
+a courtroom gavel
+a detective's magnifying glass
+a butler named Jeeves
+a robot uprising
+a rogue AI
+a spaceship's escape pod
+a pirate's treasure map
+a parrot on a pirate's shoulder
+a magic carpet
+a crystal ball
+a fortune teller's tent
+a wizard's staff
+a witch's cauldron
+a superhero cape
+a mask and cowl
+a UFO sighting
+a conspiracy corkboard
+a lie detector test
+a witness protection program
+an undercover cop
+a double agent
+a secret handshake
+a spy gadget
+an evil twin
+a long-lost sibling reveal
+a wedding objection
+a soap opera amnesia plot
+a cliffhanger season finale
+a training montage
+a rival's dojo
+a martial arts tournament
+a magic potion
+an enchanted sword
+a talking animal sidekick
+a chosen one prophecy
+a countdown timer
+a secret bunker
+a rockstar's guitar smash
+a boy band reunion tour
+a one-hit wonder
+a karaoke machine
+a mixtape
+a garage band's first gig
+a talent agent's business card
+a paparazzi photo
+
+# --- pop culture: more classic literature, myth, and public domain ---
+Robinson Crusoe
+Long John Silver
+Captain Ahab
+Quasimodo
+Notre Dame's bell tower
+the Three Musketeers
+Cyrano's nose
+Don Quixote
+a windmill giant
+Snow White
+the seven dwarfs
+a wicked queen's mirror
+Hansel and Gretel
+a witch's gingerbread house
+the Pied Piper
+Rumpelstiltskin
+the Little Mermaid
+a sea witch's potion
+Thumbelina
+the Ugly Duckling
+Puss in Boots
+the Emperor's new clothes
+Chicken Little
+the Tortoise and the Hare
+Br'er Rabbit
+Paul Bunyan's ox
+Johnny Appleseed
+the Sandman
+Father Time
+the Grim Reaper's scythe
+a leprechaun's pot of gold
+a banshee's wail
+the Loch Ness Monster
+Bigfoot
+the Abominable Snowman
+a unicorn
+a griffin
+a centaur
+Atlantis
+El Dorado
+the Fountain of Youth
+the Round Table
+a court jester
+Achilles' heel
+a Trojan gift
+the Sirens' song
+Sisyphus's boulder
+Prometheus's fire
+Zeus's lightning bolt
+Cupid's arrow
+Midas's golden touch
+
+# --- pop culture: more modern film, TV, and game icons ---
+a Terminator
+a T-800 endoskeleton
+a Predator's cloak
+an Alien queen
+a Xenomorph
+a Ghostbuster's proton pack
+a Marshmallow Man
+Doc Brown's flux capacitor
+an electrified dinosaur fence
+a Bond villain's volcano lair
+a spy's signature drink order
+a boulder trap
+a whip and fedora
+a golden idol booby trap
+a snake pit
+a flaming-skulled biker
+a robot in disguise
+a giant robot mech
+a kaiju attack
+a city-stomping monster
+a kryptonite weakness
+an alien invasion
+a spaceship dogfight
+a wormhole
+a distress beacon
+a rebel base
+an evil empire
+a bounty hunter
+a smuggler's secret compartment
+a cantina full of aliens
+a droid sidekick
+a lightsaber duel
+a Vulcan mind meld
+a warp drive
+a tricorder scan
+a transporter malfunction
+an away team mission
+a holodeck malfunction
+a companion's first trip through time
+a regenerating hero
+a mutant power reveal
+a supersoldier serum
+a vibranium shield
+a web-slinger
+a radioactive spider bite
+a masked vigilante
+a grappling hook
+a utility belt
+a rogues gallery
+a nemesis's origin story
+a rooftop showdown
+a shapeshifting alien
+a mothership hovering overhead
+a crop circle
+a government cover-up
+a first-contact scene
+
+# --- pop culture: video games (generic, no single franchise) ---
+a respawn point
+a boss battle
+a loot chest
+a health bar
+a checkpoint save
+a speedrun
+a rage quit
+a game over screen
+a hidden Easter egg
+a multiplayer lobby
+a leaderboard
+a skill tree
+a crafting table
+a pixelated sprite
+an arcade high score
+a joystick
+a cheat code
+a tutorial level
+a final boss
+a quest marker
+an inventory screen
+a virtual reality headset
+a claw machine
+a pinball machine
+a Rubik's cube
+a fighting game combo
+a battle royale circle
+a lag spike
+a game controller with a broken button
+an achievement unlocked banner
+a loading screen
+a permadeath
+a side quest
+a random loot drop
+a split-screen match
+
+# --- pop culture: reality TV and game shows ---
+an elimination ceremony
+a rose ceremony
+an immunity idol
+a tribal council
+a dating show villa
+a cooking show elimination
+a renovation show reveal
+a singing competition's judge panel
+a dance-off
+a lip sync battle
+a spelling bee
+a mystery box challenge
+a survival island vote
+a talent show golden buzzer
+a prize wheel spin
+a hidden camera prank
+a makeover reveal
+a renovation budget overrun
+a baking show soggy bottom
+a quiz show lifeline
+a dating app profile
+a viral audition tape
+a game show showcase prize
+a reality show villain edit
+a confessional camera meltdown
+
+# --- pop culture: music and celebrity ---
+a world tour
+a sold-out arena
+a chart-topping single
+a music video shoot
+a red carpet interview
+a Grammy speech
+an autograph line
+a fan club newsletter
+a backstage pass
+a stage dive
+an encore chant
+a wardrobe malfunction
+a lip sync scandal
+a viral dance challenge
+a music festival mud pit
+a tour bus breakdown
+a diva demand in a contract rider
+a battle of the bands
+a record label bidding war
+a greatest hits album
+
+# --- pop culture: sports ---
+a buzzer beater
+a hat trick
+a penalty shootout
+a locker room pep talk
+a championship trophy
+an underdog upset
+an instant replay review
+a mascot race
+a half-time show
+a rookie draft pick
+a hall of fame induction
+a photo finish
+a sudden-death overtime
+a home run derby
+a marathon finish line
+a medal ceremony
+a rival team's trash talk
+a Hail Mary pass
+a locker room prank
+a post-game press conference
+
+# --- pop culture: internet and viral culture ---
+a viral video
+a meme format
+a comment section argument
+a group chat drama
+a clickbait headline
+an unboxing video
+a prank video gone wrong
+a livestream donation alert
+a subscriber milestone
+a trending hashtag
+a doorbell camera clip
+a screenshot leak
+a reaction video
+an influencer sponsorship deal
+a follower count
+a viral dance trend
+a deepfake scare
+an online quiz result
+a comment section troll
+a cringe compilation
+
+# --- pop culture: sitcom and soap opera tropes ---
+a laugh track
+a will-they-won't-they couple
+a sitcom neighbor barging in
+a soap opera coma
+a courtroom paternity test
+a diner hangout spot
+a roommate rent dispute
+a nosy landlord
+a surprise pregnancy reveal
+a family Thanksgiving argument
+a class reunion grudge
+a will-reading family feud
+an office romance secretly revealed
+
+# --- pop culture: films and film franchises (titles only, never a quoted line) ---
+# classic / golden age
+Casablanca
+Citizen Kane
+Gone with the Wind
+Singin' in the Rain
+Some Like It Hot
+Sunset Boulevard
+It's a Wonderful Life
+Vertigo
+Rear Window
+# science fiction
+Star Wars
+Star Trek
+Blade Runner
+Alien
+The Terminator
+Back to the Future
+2001: A Space Odyssey
+E.T. the Extra-Terrestrial
+Close Encounters of the Third Kind
+Interstellar
+# fantasy and adventure
+The Lord of the Rings
+Indiana Jones
+Pirates of the Caribbean
+The Princess Bride
+Willow
+The NeverEnding Story
+Jumanji
+The Chronicles of Narnia
+# horror
+Jaws
+Halloween
+A Nightmare on Elm Street
+The Exorcist
+Psycho
+The Shining
+Scream
+The Texas Chain Saw Massacre
+Get Out
+A Quiet Place
+# action and thriller
+Die Hard
+The Fast and the Furious
+Mission: Impossible
+John Wick
+James Bond
+The Bourne Identity
+Speed
+Lethal Weapon
+Mad Max
+# superhero
+The Avengers
+Batman
+Spider-Man
+Superman
+X-Men
+Wonder Woman
+Iron Man
+The Dark Knight
+# comedy
+Ghostbusters
+Anchorman
+Airplane!
+Groundhog Day
+Bridesmaids
+Dumb and Dumber
+The Hangover
+Meet the Parents
+Napoleon Dynamite
+Superbad
+# animated and family
+Toy Story
+Shrek
+Finding Nemo
+The Lion King
+Frozen
+Up
+Beauty and the Beast
+Aladdin
+The Incredibles
+Coco
+# drama
+Forrest Gump
+The Shawshank Redemption
+Titanic
+Good Will Hunting
+The Godfather
+Schindler's List
+A Beautiful Mind
+The Green Mile
+# musical
+Grease
+The Sound of Music
+La La Land
+Mamma Mia
+West Side Story
+# romance
+When Harry Met Sally
+Notting Hill
+The Notebook
+Pretty Woman
+Sleepless in Seattle
+# western
+The Good the Bad and the Ugly
+Tombstone
+True Grit
+Butch Cassidy and the Sundance Kid
+# war
+Saving Private Ryan
+Apocalypse Now
+Full Metal Jacket
+1917
+
+# --- pop culture: novels across genres (titles only, never a quoted line) ---
+# classic literary canon
+Pride and Prejudice
+War and Peace
+Anna Karenina
+Crime and Punishment
+Great Expectations
+Jane Eyre
+Wuthering Heights
+The Great Gatsby
+To Kill a Mockingbird
+Little Women
+Middlemarch
+David Copperfield
+Beloved
+# science fiction
+Dune
+Foundation
+The Martian
+Ender's Game
+Neuromancer
+The Left Hand of Darkness
+Snow Crash
+The War of the Worlds
+Do Androids Dream of Electric Sheep?
+A Wrinkle in Time
+# fantasy
+The Hobbit
+A Song of Ice and Fire
+Mistborn
+The Name of the Wind
+The Wheel of Time
+American Gods
+Watership Down
+Good Omens
+the Earthsea series
+Neverwhere
+# mystery and detective
+And Then There Were None
+Murder on the Orient Express
+The Big Sleep
+Gone Girl
+The Girl with the Dragon Tattoo
+In Cold Blood
+The Maltese Falcon
+Rebecca
+The Da Vinci Code
+The Hound of the Baskervilles
+# horror and gothic
+The Haunting of Hill House
+It
+Rosemary's Baby
+The Turn of the Screw
+House of Leaves
+Interview with the Vampire
+Frankenstein
+The Picture of Dorian Gray
+# romance
+Outlander
+Persuasion
+Sense and Sensibility
+The Fault in Our Stars
+Me Before You
+The Time Traveler's Wife
+Bridget Jones's Diary
+Twilight
+# historical fiction
+All Quiet on the Western Front
+The Book Thief
+The Nightingale
+Memoirs of a Geisha
+The Pillars of the Earth
+Wolf Hall
+The Kite Runner
+# dystopian and speculative
+1984
+Brave New World
+Fahrenheit 451
+The Handmaid's Tale
+Never Let Me Go
+The Hunger Games
+Animal Farm
+A Clockwork Orange
+# adventure and epic
+The Odyssey
+Treasure Island
+The Count of Monte Cristo
+Twenty Thousand Leagues Under the Sea
+King Solomon's Mines
+The Call of the Wild
+Around the World in Eighty Days
+# satire and comedy
+Catch-22
+Slaughterhouse-Five
+The Hitchhiker's Guide to the Galaxy
+A Confederacy of Dunces
+Lucky Jim
+# spy and political thriller
+Tinker Tailor Soldier Spy
+The Hunt for Red October
+The Day of the Jackal
+Casino Royale
+The Spy Who Came in from the Cold
+# young adult
+The Perks of Being a Wallflower
+Divergent
+Percy Jackson and the Olympians
+The Outsiders
+# magical realism
+One Hundred Years of Solitude
+Life of Pi
+The Alchemist
+# war novels
+The Things They Carried
+All the Light We Cannot See

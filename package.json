@@ -14,6 +14,8 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "audience-prompt": "tsx src/index.ts audience-prompt",
+    "experiment:audience-strategies": "tsx experiments/audience-prompt-strategies/run.ts",
+    "experiment:audience-variety": "tsx experiments/audience-prompt-strategies/run-variety.ts",
     "generated-scene": "tsx src/index.ts generated-scene",
     "build": "node scripts/build.mjs",
     "start": "node dist/index.js",
