@@ -8,3 +8,5 @@ experiments/*/results/
 *.log
 .DS_Store
 .claude/settings.local.json
+*.swp
+*.swo
