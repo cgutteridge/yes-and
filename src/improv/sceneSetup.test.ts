@@ -17,7 +17,6 @@ function buildAudienceResult(
   return {
     promptType,
     seedWords: ["one", "two", "three"],
-    thought: `${promptType} thought ${index}`,
     association: `${promptType} association ${index}`,
     type: promptType,
     suggestion: `${promptType} suggestion ${index}`,

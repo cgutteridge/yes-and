@@ -273,6 +273,36 @@ Random words:
 ${JSON.stringify(params.seedWords)}`;
 }
 
+/**
+ * Single-call replacement for the buildAudienceThoughtPrompt + buildAudienceAssociationPrompt
+ * pair below: connects the seed words into one daydream in one call instead of two, and treats
+ * the words as perturbation the daydream is free to ignore rather than material it must
+ * incorporate. Measured against the two-call "must connect" shape across fresh random draws:
+ * produced more varied daydreams (the "must connect" version settled onto the same handful of
+ * daydreams across independent draws) and, on genuinely obscure random dictionary seeds, never
+ * let an obscure seed word survive into the final suggestion -- the "must connect" version did,
+ * twice in ten draws, apparently because forcing a connection to unusable material sometimes left
+ * the model nothing to reach for but the material itself.
+ *
+ * buildAudienceThoughtPrompt and buildAudienceAssociationPrompt below are kept, unused by
+ * generateAudiencePrompt, so the three-call shape stays available if it's ever needed again.
+ */
+export function buildAudienceGroundingPrompt(params: { seedWords: string[] }): string {
+  return `You are simulating one ordinary audience member at a live improv or standup show,
+caught in a brief daydream.
+
+These words are floating through your mind right now, more like background static than a topic:
+${JSON.stringify(params.seedWords)}. They are NOT a puzzle to solve and your daydream does not
+need to end up connected to any of them, or reference them at all -- they're only here to jostle
+your thinking away from whatever you'd have thought of anyway. Let your mind wander wherever it
+actually goes from that jostle, even if it lands somewhere with no obvious link back to the words.
+
+Use plain, everyday language. It can be odd, distracted, personal, or mundane, but it should read
+as one connected thought, not an improv prompt already.
+
+Return one concise association matching the required schema.`;
+}
+
 export function buildAudienceAssociationPrompt(params: { thought: string }): string {
   return `You are still simulating one ordinary audience member at a live improv show.
 
@@ -312,6 +342,11 @@ Derive the suggestion from the specific content of the last thought below, even 
 abstract or odd -- find whatever is genuinely nearest to it instead of reaching for a generic,
 stock, or unrelated answer just because the thought is hard to convert. A safe cliché that only
 contrasts with the thought does not count as a real connection.
+
+Keep the vocabulary itself ordinary: every word in the suggestion should be something any adult in
+the audience would immediately recognize, even if the material above used a rarer or more
+technical word. Translate the idea behind an unfamiliar word into everyday language rather than
+repeating the word itself.
 
 Use the required fields this way:
 - type: exactly "${params.promptType.id}".

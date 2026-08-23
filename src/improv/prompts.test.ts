@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildActorSystemPrompt,
   buildAudienceAssociationPrompt,
+  buildAudienceGroundingPrompt,
   buildAudienceSystemPrompt,
   buildAudienceSuggestionPrompt,
   buildAudienceThoughtPrompt,
@@ -75,6 +76,35 @@ describe("buildAudienceThoughtPrompt", () => {
     // assert
     expect(prompt).toContain("private internal dialogue");
     expect(prompt).toContain("should not already be an improv prompt");
+  });
+});
+
+describe("buildAudienceGroundingPrompt", () => {
+  it("includes all seed words", () => {
+    // arrange
+    const seedWords = ["orchard", "tribunal", "velvet"];
+
+    // act
+    const prompt = buildAudienceGroundingPrompt({ seedWords });
+
+    // assert
+    expect(prompt).toContain('"orchard"');
+    expect(prompt).toContain('"tribunal"');
+    expect(prompt).toContain('"velvet"');
+  });
+
+  it("treats the seed words as background noise the daydream is free to ignore", () => {
+    // arrange
+    const seedWords = ["kettle", "passport", "choir"];
+
+    // act
+    const prompt = buildAudienceGroundingPrompt({ seedWords });
+
+    // assert -- guards against regressing to requiring a traceable connection: measured to
+    // collapse onto a handful of repeated daydreams across independent draws, see prompts.ts.
+    expect(prompt).toContain("background static");
+    expect(prompt).toContain("does not\nneed to end up connected to any of them");
+    expect(prompt).toContain("even if it lands somewhere with no obvious link back to the words");
   });
 });
 
@@ -161,6 +191,23 @@ describe("buildAudienceSuggestionPrompt", () => {
     expect(prompt).toContain("one to four words");
     expect(prompt).toContain('"unexpected grit"');
     expect(prompt).toContain("the pithy thing itself");
+  });
+
+  it("requires ordinary vocabulary even when the material above used a rarer word", () => {
+    // arrange
+    const params = {
+      association: "wandering past the columbarium at the edge of the churchyard",
+      promptType: audiencePromptTypes.location,
+    };
+
+    // act
+    const prompt = buildAudienceSuggestionPrompt(params);
+
+    // assert -- guards against an obscure seed/association word (e.g. "columbarium") surviving
+    // verbatim into the suggestion instead of being translated to something an audience knows.
+    expect(prompt).toContain("Keep the vocabulary itself ordinary");
+    expect(prompt).toContain("immediately recognize");
+    expect(prompt).toContain("Translate the idea behind an unfamiliar word");
   });
 });
 

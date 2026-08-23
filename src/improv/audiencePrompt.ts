@@ -3,17 +3,14 @@ import type OpenAI from "openai";
 import { runJsonQuery } from "../services/jsonQueryService.js";
 import {
   audienceAssociationSchema,
-  audienceThoughtSchema,
   buildAudienceSuggestionSchema,
   type AudienceAssociation,
   type AudienceSuggestion,
-  type AudienceThought,
 } from "./schemas.js";
 import {
-  buildAudienceAssociationPrompt,
+  buildAudienceGroundingPrompt,
   buildAudienceSuggestionPrompt,
   buildAudienceSystemPrompt,
-  buildAudienceThoughtPrompt,
 } from "./prompts.js";
 import { audiencePromptTypes, type AudiencePromptTypeId } from "./audiencePromptTypes.js";
 
@@ -31,7 +28,6 @@ export type AudiencePromptProgressReporter = (message: string) => void;
 export interface AudiencePromptResult {
   promptType: AudiencePromptTypeId;
   seedWords: string[];
-  thought: string;
   association: string;
   type: AudiencePromptTypeId;
   suggestion: string;
@@ -100,31 +96,13 @@ export async function generateAudiencePrompt(
     params.random ?? Math.random,
   );
   report(`Seed words: ${seedWords.join(", ")}`);
-  report("Connecting the seed words into one audience member's internal dialogue...");
+  report("Letting the seed words jostle one audience member's daydream...");
 
-  const thoughtPrompt = buildAudienceThoughtPrompt({ seedWords });
-  const thought: AudienceThought = await runJsonQuery(
-    client,
-    audienceThoughtSchema,
-    thoughtPrompt,
-    {
-      model,
-      maxAttempts: 3,
-      operation: "audience-prompt:thought",
-      aiLogPath: params.aiLogPath,
-      aiFullLogPath: params.aiFullLogPath,
-      systemInstructions,
-      temperature: AUDIENCE_PROMPT_TEMPERATURE,
-    },
-  );
-  report(`Internal dialogue: ${thought.thought}`);
-  report("Translating the internal dialogue into an everyday association...");
-
-  const associationPrompt = buildAudienceAssociationPrompt({ thought: thought.thought });
+  const groundingPrompt = buildAudienceGroundingPrompt({ seedWords });
   const association: AudienceAssociation = await runJsonQuery(
     client,
     audienceAssociationSchema,
-    associationPrompt,
+    groundingPrompt,
     {
       model,
       maxAttempts: 3,
@@ -135,7 +113,7 @@ export async function generateAudiencePrompt(
       temperature: AUDIENCE_PROMPT_TEMPERATURE,
     },
   );
-  report(`Everyday association: ${association.association}`);
+  report(`Daydream: ${association.association}`);
   report(`Asking that simulated audience member for ${promptType.requestText}...`);
 
   const suggestionPrompt = buildAudienceSuggestionPrompt({
@@ -162,7 +140,6 @@ export async function generateAudiencePrompt(
   return {
     promptType: promptType.id,
     seedWords,
-    thought: thought.thought,
     association: association.association,
     type: suggestion.type,
     suggestion: suggestion.suggestion,

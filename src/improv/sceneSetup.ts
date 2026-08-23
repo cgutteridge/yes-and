@@ -25,7 +25,6 @@ export const sceneSetupSuggestionCounts = {
 export interface SceneSetupCandidate extends DirectorSceneSetupCandidate {
   promptType: AudiencePromptTypeId;
   seedWords: string[];
-  thought: string;
   association: string;
   rationale: string;
 }
@@ -132,7 +131,6 @@ function buildCandidate(
     type: result.type,
     suggestion: result.suggestion,
     seedWords: result.seedWords,
-    thought: result.thought,
     association: result.association,
     rationale: result.rationale,
   };
